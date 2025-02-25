@@ -1,65 +1,65 @@
-import _ from "lodash";
-import axios, { AxiosError } from "axios";
+import _ from 'lodash'
+import axios, { AxiosError } from 'axios'
 
 // Create an instance of axios
 export const apiClient = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_URL,
-	headers: {
-		"Content-Type": "application/json",
-		Accept: "application/json",
-	},
-});
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+})
 
 class ApiError extends AxiosError {
-	constructor(message: string, name?: string) {
-		super(message);
-		this.name = name || "";
-	}
+  constructor(message: string, name?: string) {
+    super(message)
+    this.name = name || ''
+  }
 }
 
 apiClient.interceptors.response.use(
-	(response) => response,
-	(error) => {
-		const err = error as AxiosError<{
-			name?: string;
-			message?: string;
-			detail?: string;
-			statusCode: number;
-		}>;
+  (response) => response,
+  (error) => {
+    const err = error as AxiosError<{
+      name?: string
+      message?: string
+      detail?: string
+      statusCode: number
+    }>
 
-		// Extract the detail property from the error
-		const detail = err.response?.data?.detail;
+    // Extract the detail property from the error
+    const detail = err.response?.data?.detail
 
-		let errorName = err.name;
+    let errorName = err.name
 
-		let message: string;
+    let message: string
 
-		// Check the status code and set the error name if it's 500
-		if (err.response?.status === 500) {
-			errorName = "Internal Server Error";
-		}
+    // Check the status code and set the error name if it's 500
+    if (err.response?.status === 500) {
+      errorName = 'Internal Server Error'
+    }
 
-		// Check if detail is an array
-		if (_.isArray(detail)) {
-			// If it is an array, map over each item to create a list of error messages
-			let messages = detail.map((item: any) => {
-				const field = item.loc?.[1].replace("_", " ");
-				return `The ${field} - (${item.input}) is not valid.`;
-			});
-			// Combime them into single message
-			message = messages.join(" ");
-		} else if (_.isString(detail)) {
-			// If it a string, assign directly to message
-			message = detail;
-		} else {
-			// If detail is neither an array nor a string,
-			// fall back to other possible message sources
-			message = err.response?.data?.message || err.message;
-		}
+    // Check if detail is an array
+    if (_.isArray(detail)) {
+      // If it is an array, map over each item to create a list of error messages
+      let messages = detail.map((item: any) => {
+        const field = item.loc?.[1].replace('_', ' ')
+        return `The ${field} - (${item.input}) is not valid.`
+      })
+      // Combime them into single message
+      message = messages.join(' ')
+    } else if (_.isString(detail)) {
+      // If it a string, assign directly to message
+      message = detail
+    } else {
+      // If detail is neither an array nor a string,
+      // fall back to other possible message sources
+      message = err.response?.data?.message || err.message
+    }
 
-		const apiError = new ApiError(message);
-		apiError.name = errorName;
+    const apiError = new ApiError(message)
+    apiError.name = errorName
 
-		return Promise.reject(new ApiError(message));
-	},
-);
+    return Promise.reject(new ApiError(message))
+  }
+)
