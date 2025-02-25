@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import React from "react";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -14,10 +15,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 				</div>
 			</div>
 			<div className="relative hidden w-0 flex-1 lg:block">
-				<img
-					alt=""
+				<Image
+					alt="Auth Background"
 					src="/auth-background.jpeg"
-					className="absolute inset-0 size-full object-cover"
+					fill
+					className="absolute inset-0 object-cover"
 				/>
 			</div>
 		</div>
