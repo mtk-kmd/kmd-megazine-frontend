@@ -69,19 +69,19 @@ const data = {
       items: [
         {
           title: 'Students',
-          url: '/user-management/students',
+          url: '/students',
         },
         {
           title: 'Coordinators',
-          url: '/user-management/coordinators',
+          url: '/coordinators',
         },
         {
           title: 'Managers',
-          url: '/user-management/managers',
+          url: '/managers',
         },
         {
           title: 'Guests',
-          url: '/user-management/guests',
+          url: '/guests',
         },
       ],
     },
