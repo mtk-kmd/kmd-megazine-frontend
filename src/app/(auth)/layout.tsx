@@ -19,6 +19,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           alt="Auth Background"
           src="/auth-background.jpeg"
           fill
+          priority
           className="absolute inset-0 object-cover"
         />
       </div>

@@ -13,7 +13,7 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
   '/contributions': [{ title: 'Contributions', link: '/contributions' }],
   '/students': [
     { title: 'Home', link: '/' },
-    { title: 'Contributions', link: '/contributions' },
+    { title: 'Students', link: '/students' },
   ],
   '/coordinators': [
     { title: 'Home', link: '/' },
