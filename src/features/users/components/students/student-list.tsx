@@ -25,14 +25,11 @@ const StudentList = () => {
 
   if (isSuccess) {
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10">
-        <Header />
-        <DataTable
-          data={data}
-          columns={columns}
-          searchLabel="Search by name or email"
-        />
-      </div>
+      <DataTable
+        data={data}
+        columns={columns}
+        searchLabel="Search by name or email"
+      />
     )
   }
 
