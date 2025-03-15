@@ -7,7 +7,6 @@ import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/features/auth/utils/schema'
-
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import {
@@ -18,9 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Eye, EyeClosed } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Eye, EyeClosed } from 'lucide-react'
 
 const Login = () => {
   const router = useRouter()
@@ -47,21 +46,18 @@ const Login = () => {
       })
 
       if (!response.ok) {
-        toast.error(response.error, { duration: 2500, position: 'top-right' })
+        toast.error(response.error, { position: 'top-right' })
       } else {
         toast.success('You’ve successfully logged in.', {
-          duration: 2500,
           position: 'top-right',
         })
-
         return router.push(redirectFrom)
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error(error.message, { duration: 2500, position: 'top-right' })
+        toast.error(error.message, { position: 'top-right' })
       } else {
         toast.error('An unexpected error occurred.', {
-          duration: 2500,
           position: 'top-right',
         })
       }

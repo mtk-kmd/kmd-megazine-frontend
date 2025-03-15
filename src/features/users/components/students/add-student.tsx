@@ -10,11 +10,13 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer'
+
 import React, { useState } from 'react'
-import { ControllerRenderProps, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { addStudentSchema } from '@/features/users/utils/validator'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ControllerRenderProps, useForm } from 'react-hook-form'
+import { addStudentSchema } from '@/features/users/utils/validator'
+
 import {
   Form,
   FormControl,
@@ -25,7 +27,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Check, ChevronsUpDown, Eye, EyeClosed } from 'lucide-react'
-import { PhoneInput } from '@/components/ui/phone-input'
+
 import {
   Popover,
   PopoverTrigger,
@@ -44,39 +46,103 @@ import { cn } from '@/lib/utils'
 import { useSession } from 'next-auth/react'
 import { useGetFalculties } from '@/features/falculty/api/falculty'
 
+import {
+  useCreateUser,
+  useAssignStudentToFaculty,
+} from '@/features/users/api/users'
+import { ROLE } from '@/utils/constants'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { useQueryClient } from '@tanstack/react-query'
+
+const initialStudentFormValues = {
+  username: '',
+  first_name: '',
+  last_name: '',
+  phone: '',
+  email: '',
+  password: '',
+  faculty_id: '',
+  role: ROLE['student'],
+}
+
 const AddStudent: React.FC<{
   open: boolean
   onOpenChange: (open: boolean) => void
 }> = ({ open, onOpenChange }) => {
   const session = useSession()
-  const accessToken = session?.data?.user?.token as string
+  const apolloClient = useQueryClient()
 
-  const [isFacultySelectOpen, setIsFacultySelectOpen] = useState(false)
+  const accessToken = session?.data?.user?.token as string
+  const { mutate: createUserMutate, isPending: isCreateUserMutating } =
+    useCreateUser(accessToken)
+
+  const {
+    mutate: assignStudentToFacultyMutate,
+    isPending: isAssignStudentToFacultyMutating,
+  } = useAssignStudentToFaculty(accessToken)
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [isFacultySelectOpen, setIsFacultySelectOpen] = useState(false)
 
   const {
     error,
     isSuccess,
     data = [],
-    isFetching,
+    isFetching: isGetFalcultiesFetching,
   } = useGetFalculties(accessToken, !!accessToken)
 
   const form = useForm<z.infer<typeof addStudentSchema>>({
     resolver: zodResolver(addStudentSchema),
+    defaultValues: { ...initialStudentFormValues },
   })
 
-  function onSubmit(values: z.infer<typeof addStudentSchema>) {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof addStudentSchema>) => {
+    createUserMutate(
+      {
+        username: values.username,
+        password: values.password,
+        role: values.role,
+        email: values.email,
+        phone: values.phone,
+        first_name: values.first_name,
+        last_name: values.last_name,
+      },
+      {
+        onSuccess(data, variables, context) {
+          assignStudentToFacultyMutate(
+            {
+              faculty_id: parseInt(values.faculty_id),
+              student_id: data.result.user.user_id,
+            },
+            {
+              async onSuccess(data, variables, context) {
+                await apolloClient.invalidateQueries({
+                  queryKey: ['users', 'role', 'student'],
+                })
+                handleOnDismiss(false)
+              },
+            }
+          )
+        },
+      }
+    )
   }
 
   const togglePasswordVisible = (open: boolean) => {
     setIsPasswordVisible(open)
   }
 
+  const handleOnDismiss = (open: boolean) => {
+    if (!isCreateUserMutating && !isAssignStudentToFacultyMutating) {
+      form.reset({ ...initialStudentFormValues })
+      onOpenChange(open)
+    }
+  }
+
   const renderFaculties = (
     field: ControllerRenderProps<z.infer<typeof addStudentSchema>, 'faculty_id'>
   ) => {
-    if (isFetching) {
+    if (isGetFalcultiesFetching) {
       return <span>Loading...</span>
     }
 
@@ -122,11 +188,6 @@ const AddStudent: React.FC<{
     return null
   }
 
-  const handleOnDismiss = (open: boolean) => {
-    form.reset()
-    onOpenChange(open)
-  }
-
   return (
     <Drawer open={open} onOpenChange={handleOnDismiss}>
       <DrawerContent className="flex h-full max-h-[calc(100dvh-0.75rem)] flex-col">
@@ -142,7 +203,7 @@ const AddStudent: React.FC<{
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex-1 overflow-y-auto"
           >
-            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-3 p-4 pb-0 md:grid-cols-2">
+            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-3 p-4 pt-0 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="username"
@@ -150,12 +211,61 @@ const AddStudent: React.FC<{
                   <FormItem className="col-span-2">
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter username" {...field} />
+                      <Input
+                        disabled={
+                          isCreateUserMutating ||
+                          isAssignStudentToFacultyMutating
+                        }
+                        placeholder="Enter username"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 md:col-span-1">
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={
+                          isCreateUserMutating ||
+                          isAssignStudentToFacultyMutating
+                        }
+                        placeholder="Enter first name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 md:col-span-1">
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={
+                          isCreateUserMutating ||
+                          isAssignStudentToFacultyMutating
+                        }
+                        placeholder="Enter last name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="faculty_id"
@@ -173,6 +283,10 @@ const AddStudent: React.FC<{
                             role="combobox"
                             aria-expanded={isFacultySelectOpen}
                             className="w-full justify-between"
+                            disabled={
+                              isCreateUserMutating ||
+                              isAssignStudentToFacultyMutating
+                            }
                           >
                             {(() => {
                               const faculty = field.value
@@ -199,32 +313,7 @@ const AddStudent: React.FC<{
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => (
-                  <FormItem className="col-span-1 md:col-span-1">
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter first name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem className="col-span-1 md:col-span-1">
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter last name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -232,13 +321,20 @@ const AddStudent: React.FC<{
                   <FormItem className="col-span-2">
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter student email" {...field} />
+                      <Input
+                        disabled={
+                          isCreateUserMutating ||
+                          isAssignStudentToFacultyMutating
+                        }
+                        placeholder="Enter student email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
@@ -248,6 +344,10 @@ const AddStudent: React.FC<{
                       <PhoneInput
                         international
                         defaultCountry="MM"
+                        disabled={
+                          isCreateUserMutating ||
+                          isAssignStudentToFacultyMutating
+                        }
                         className="shadow-none"
                         placeholder="Enter a phone number"
                         {...field}
@@ -256,7 +356,7 @@ const AddStudent: React.FC<{
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="password"
@@ -266,6 +366,10 @@ const AddStudent: React.FC<{
                     <FormControl>
                       <div className="relative">
                         <Input
+                          disabled={
+                            isCreateUserMutating ||
+                            isAssignStudentToFacultyMutating
+                          }
                           placeholder="6+ characters"
                           className="pr-6"
                           {...field}
@@ -299,11 +403,23 @@ const AddStudent: React.FC<{
         </Form>
         <DrawerFooter className="mx-auto flex w-full max-w-md flex-col gap-3 lg:flex-row">
           <DrawerClose asChild>
-            <Button className="lg:flex-1" variant="outline">
+            <Button
+              disabled={
+                isCreateUserMutating || isAssignStudentToFacultyMutating
+              }
+              className="lg:flex-1"
+              variant="outline"
+            >
               Cancel
             </Button>
           </DrawerClose>
-          <Button className="lg:flex-1" form="add-student-form" type="submit">
+          <Button
+            type="submit"
+            className="lg:flex-1"
+            form="add-student-form"
+            disabled={isGetFalcultiesFetching}
+            loading={isCreateUserMutating || isAssignStudentToFacultyMutating}
+          >
             Submit
           </Button>
         </DrawerFooter>

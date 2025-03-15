@@ -4,7 +4,6 @@ import { columns } from './columns'
 import { useSession } from 'next-auth/react'
 import { DataTable } from '@/components/ui/data-table'
 import { useGetUsers } from '@/features/users/api/users'
-import Header from './header'
 
 const StudentList = () => {
   const session = useSession()
