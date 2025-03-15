@@ -4,15 +4,14 @@ import { columns } from './columns'
 import { useSession } from 'next-auth/react'
 import { DataTable } from '@/components/ui/data-table'
 import { useGetUsers } from '@/features/users/api/users'
-import Header from './header'
 
-const StudentList = () => {
+const GuestList = () => {
   const session = useSession()
   const accessToken = session.data?.user.token
 
   const { isLoading, data, error, isSuccess } = useGetUsers(
     accessToken as string,
-    'student',
+    'guest',
     !!accessToken
   )
 
@@ -37,4 +36,4 @@ const StudentList = () => {
   return null
 }
 
-export default StudentList
+export default GuestList
