@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { Student } from '@/features/users/types'
-import { PencilLine, Trash2, View } from 'lucide-react'
+import { ChevronsUpDown, PencilLine, Trash2, View } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -13,7 +13,17 @@ import { Badge } from '@/components/ui/badge'
 export const columns: ColumnDef<Student>[] = [
   {
     accessorKey: 'user_id',
-    header: 'ID',
+    header: ({ column }) => {
+      return (
+        <div
+          className="flex items-center gap-4 text-left"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          ID
+          <ChevronsUpDown size={16} />
+        </div>
+      )
+    },
   },
   {
     accessorKey: 'user_name',
