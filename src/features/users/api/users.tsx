@@ -3,7 +3,7 @@ import { apiClient } from '@/lib/api-client'
 import { useQuery } from '@tanstack/react-query'
 import { StudentApiResponseType } from '../types'
 
-const getStudents = async ({ token }: { token: string }) => {
+const getUsers = async ({ token, role }: { token: string; role: string }) => {
   try {
     const response = await apiClient.get<StudentApiResponseType>('/getUsers', {
       headers: {
@@ -12,7 +12,7 @@ const getStudents = async ({ token }: { token: string }) => {
     })
 
     const studentData = response.data.result.filter(
-      (user) => user.role && user.role.role_name.toLowerCase() === 'student'
+      (user) => user.role && user.role.role_name.toLowerCase() === role
     )
 
     return studentData
@@ -20,14 +20,18 @@ const getStudents = async ({ token }: { token: string }) => {
     if (axios.isAxiosError(error)) {
       throw new Error(error.message)
     }
-    throw new Error('Failed to retrieve students information.')
+    throw new Error('Failed to retrieve users information.')
   }
 }
 
-export const useGetStudents = (token: string, enabled: boolean = false) => {
+export const useGetUsers = (
+  token: string,
+  role: string,
+  enabled: boolean = false
+) => {
   return useQuery({
-    queryKey: ['students'],
-    queryFn: () => getStudents({ token }),
+    queryKey: ['users', 'role', role],
+    queryFn: () => getUsers({ token, role }),
     enabled: enabled,
   })
 }
