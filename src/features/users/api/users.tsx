@@ -49,7 +49,6 @@ const createUser = async ({
     )
     return response.data
   } catch (error) {
-    console.log(error)
     if (axios.isAxiosError(error)) {
       throw new Error(error.message)
     }
