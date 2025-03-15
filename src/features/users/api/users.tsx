@@ -7,6 +7,7 @@ import {
   CreateUserPayload,
   CreateUserApiResponse,
   AssignStudentToFacultyResponse,
+  GetUserApiResponse,
 } from '../types'
 
 const getUsers = async ({ token, role }: { token: string; role: string }) => {
@@ -27,6 +28,32 @@ const getUsers = async ({ token, role }: { token: string; role: string }) => {
       throw new Error(error.message)
     }
     throw new Error('Failed to retrieve users information.')
+  }
+}
+
+const getUser = async ({
+  token,
+  user_id,
+}: {
+  token: string
+  user_id: number
+}) => {
+  try {
+    const response = await apiClient.get<GetUserApiResponse>(
+      `/getUsers?user_id=${user_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to retrieve user information.')
   }
 }
 
@@ -94,6 +121,19 @@ export const useGetUsers = (
     queryKey: ['users', 'role', role],
     queryFn: () => getUsers({ token, role }),
     enabled: enabled,
+  })
+}
+
+export const useGetUser = (
+  token: string,
+  user_id: number,
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ['users', user_id],
+    queryFn: () => getUser({ token, user_id }),
+    enabled: enabled,
+    refetchOnWindowFocus: false,
   })
 }
 

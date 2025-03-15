@@ -51,6 +51,11 @@ export type UserAuth = {
   updatedAt: string
 }
 
+export type GetUserApiResponse = {
+  message: string
+  result: User
+}
+
 export type CreateUserApiResponse = {
   message: string
   result: {
