@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
-import { User } from '@/features/users/types'
+import { User, UserWithOptionalFaculty } from '@/features/users/types'
 import { ChevronsUpDown, PencilLine, Trash2, View } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +11,7 @@ import {
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   {
     accessorKey: 'user_id',
     header: ({ column }) => {
@@ -35,6 +35,23 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: 'email',
     header: 'Email',
     filterFn: 'includesString',
+  },
+  {
+    accessorFn: (row) => row.Faculty?.faculty_id,
+    header: 'Faculty',
+    id: 'faculty',
+    accessorKey: 'faculty',
+    cell: ({ row }) => {
+      return (
+        <div key={row.original?.Faculty?.faculty_id}>
+          {row.original?.Faculty ? row.original?.Faculty.name : 'N/A'}
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => {
+      const facultyId = row.getValue(id)
+      return value.includes(facultyId ? String(facultyId) : '')
+    },
   },
   {
     accessorKey: 'phone',

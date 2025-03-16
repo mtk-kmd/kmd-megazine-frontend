@@ -71,7 +71,10 @@ export function DataTableToolbar<TData>({
           searchLabel={searchLabel}
           onChange={(value) => setGlobalFilter(String(value))}
         />
-        {table.getColumn('faculty') && <DataTableFacultyFilter table={table} />}
+
+        {table.getAllColumns().find((column) => column.id === 'faculty') && (
+          <DataTableFacultyFilter table={table} />
+        )}
 
         {isFiltered && (
           <Button
