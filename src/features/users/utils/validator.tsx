@@ -12,7 +12,10 @@ export const addStudentSchema = z.object({
     .string({ required_error: 'Last name is required' })
     .min(1, 'Last name is required'),
   role: z.number().default(4),
-  phone: z.string({ required_error: 'Phone number is required' }).default(''),
+  phone: z
+    .string()
+    .min(1, 'Phone number is required')
+    .refine(isValidPhoneNumber, { message: 'Invalid phone number' }),
   email: z
     .string({ required_error: 'Email address is required.' })
     .min(1, 'Email is required')
@@ -26,7 +29,8 @@ export const addStudentSchema = z.object({
 })
 
 export const editStudentSchema = z.object({
-  username: z
+  user_id: z.number().default(0),
+  user_name: z
     .string({ required_error: 'Username is required' })
     .min(1, 'Username is required'),
   first_name: z
@@ -36,15 +40,16 @@ export const editStudentSchema = z.object({
     .string({ required_error: 'Last name is required' })
     .min(1, 'Last name is required'),
   role: z.number().default(4),
-  phone: z.string({ required_error: 'Phone number is required' }).default(''),
+  phone: z
+    .string()
+    .min(1, 'Phone number is required')
+    .refine(isValidPhoneNumber, { message: 'Invalid phone number' }),
   email: z
     .string({ required_error: 'Email address is required.' })
     .min(1, 'Email is required')
     .email('Invalid email address'),
-  password: z
-    .string({ required_error: 'Password is required' })
-    .min(6, 'Password must be at least 6 characters long'),
   faculty_id: z
     .string({ required_error: 'Falculty is required' })
     .min(1, 'Faculty ID is required'),
+  status: z.boolean().default(true),
 })

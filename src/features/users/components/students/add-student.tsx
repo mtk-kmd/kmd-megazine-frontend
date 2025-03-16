@@ -334,7 +334,7 @@ const AddStudent: React.FC<{
                   </FormItem>
                 )}
               />
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
@@ -356,7 +356,7 @@ const AddStudent: React.FC<{
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="password"

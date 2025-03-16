@@ -43,6 +43,8 @@ export type CreatedUser = {
   updatedAt: string
 }
 
+export type UserEditPayload = User & { user_id: number; status: string }
+
 export type UserAuth = {
   auth_id: number
   auth_code: number
@@ -51,9 +53,24 @@ export type UserAuth = {
   updatedAt: string
 }
 
+export type Faculty = {
+  faculty_id: number
+  name: string
+  coordinator_id: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type StudentFaculty = {
+  student_faculty_id: number
+  student_id: number
+  faculty_id: number
+  faculty: Faculty
+}
+
 export type GetUserApiResponse = {
   message: string
-  result: User
+  result: User & { StudentFaculty: StudentFaculty }
 }
 
 export type CreateUserApiResponse = {
