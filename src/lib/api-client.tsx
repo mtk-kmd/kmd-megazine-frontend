@@ -10,7 +10,7 @@ export const apiClient = axios.create({
   },
 })
 
-class ApiError extends AxiosError {
+export class ApiError extends AxiosError {
   constructor(message: string, name?: string) {
     super(message)
     this.name = name || ''
