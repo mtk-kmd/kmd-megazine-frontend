@@ -1,18 +1,20 @@
 'use client'
+import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
-import { useGetUser } from '@/features/users/api/users'
+import { useEditUser, useGetUser } from '@/features/users/api/users'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { ControllerRenderProps, useForm } from 'react-hook-form'
-import { editStudentSchema } from '../../utils/validator'
+import { editStudentSchema } from '@/features/users/utils/validator'
 import { z } from 'zod'
 import { useGetFalculties } from '@/features/falculty/api/falculty'
 import {
@@ -23,7 +25,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { Check, ChevronsDown, Eye, EyeClosed } from 'lucide-react'
+import { Check, ChevronDown, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
@@ -34,25 +36,31 @@ import {
 } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { ROLE } from '@/utils/constants'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { StudentFaculty, User, UserEditPayload } from '../../types'
+import { useQueryClient } from '@tanstack/react-query'
 
 const EditStudent = () => {
   const session = useSession()
+  const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
   const params = useParams<{ studentId: string }>()
 
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const { isPending: isUserEditMutating, mutate: userEditMutate } =
+    useEditUser(accessToken)
+
   const [isFacultySelectOpen, setIsFacultySelectOpen] = useState(false)
 
   const form = useForm<z.infer<typeof editStudentSchema>>({
     resolver: zodResolver(editStudentSchema),
     defaultValues: {
-      username: '',
+      user_id: Number(params.studentId),
+      user_name: '',
       first_name: '',
       last_name: '',
       phone: '',
       email: '',
-      password: '',
-      faculty_id: '',
+      status: true,
       role: ROLE['student'],
     },
   })
@@ -64,35 +72,48 @@ const EditStudent = () => {
     isFetching: isGetFalcultiesFetching,
   } = useGetFalculties(accessToken, !!accessToken)
 
-  const { isFetching, isSuccess, error, data } = useGetUser(
+  const { isSuccess, error, data, isLoading } = useGetUser(
     accessToken,
     Number(params.studentId),
     !!accessToken
   )
 
-  const togglePasswordVisible = (open: boolean) => {
-    setIsPasswordVisible(open)
+  const resetForm = (user: User & { StudentFaculty: StudentFaculty }) => {
+    form.reset({
+      user_id: user.user_id,
+      user_name: user.user_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      phone: user.phone ? user.phone : '',
+      role: user.role?.role_id || ROLE['student'],
+      status: user.status,
+      faculty_id: user.StudentFaculty.faculty_id
+        ? user.StudentFaculty.faculty_id.toString()
+        : '',
+    })
   }
 
   useEffect(() => {
-    if (!isFetching && isSuccess && data && data.result) {
-      const user = data.result
-
-      form.reset({
-        username: user.user_name,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone: user.phone ? user.phone : '',
-        role: user.role?.role_id || ROLE['student'],
-        password: '',
-        faculty_id: '',
-      })
+    if (!isLoading && isSuccess && data && data.result) {
+      resetForm(data.result)
     }
-  }, [isSuccess, data, isFetching])
+  }, [isSuccess, data, isLoading])
+
+  const handleResetForm = () => {
+    if (data && data.result) {
+      resetForm(data.result)
+    }
+  }
 
   const onSubmit = async (values: z.infer<typeof editStudentSchema>) => {
-    console.log(values)
+    userEditMutate(_.omit(values, ['faculty_id']) as UserEditPayload, {
+      async onSuccess(data, variables, context) {
+        await queryClient.invalidateQueries({
+          queryKey: ['users', Number(params.studentId)],
+        })
+      },
+    })
   }
 
   const renderFaculties = (
@@ -147,7 +168,7 @@ const EditStudent = () => {
     return null
   }
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="container mx-auto flex flex-col gap-y-5 pb-10">
         <span>Loading...</span>
@@ -180,12 +201,16 @@ const EditStudent = () => {
               <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="username"
+                  name="user_name"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
                       <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter username" {...field} />
+                        <Input
+                          disabled={isUserEditMutating}
+                          placeholder="Enter username"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -199,7 +224,11 @@ const EditStudent = () => {
                     <FormItem className="col-span-1 md:col-span-1">
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter first name" {...field} />
+                        <Input
+                          disabled={isUserEditMutating}
+                          placeholder="Enter first name"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -212,7 +241,11 @@ const EditStudent = () => {
                     <FormItem className="col-span-1 md:col-span-1">
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter last name" {...field} />
+                        <Input
+                          disabled={isUserEditMutating}
+                          placeholder="Enter last name"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -234,6 +267,7 @@ const EditStudent = () => {
                             <Button
                               variant="outline"
                               role="combobox"
+                              disabled={true}
                               aria-expanded={isFacultySelectOpen}
                               className="w-full justify-between"
                             >
@@ -250,7 +284,7 @@ const EditStudent = () => {
                                   ? `${faculty.name}`
                                   : 'Select faculty'
                               })()}
-                              <ChevronsDown className="opacity-50" />
+                              <ChevronDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -259,6 +293,10 @@ const EditStudent = () => {
                         </Popover>
                       </FormControl>
                       <FormMessage />
+                      <FormDescription className="flex items-start text-muted-foreground">
+                        <Info className="mr-1 mt-0.5 size-3.5" />
+                        The faculty field is pre-defined and cannot be edited.
+                      </FormDescription>
                     </FormItem>
                   )}
                 />
@@ -270,67 +308,31 @@ const EditStudent = () => {
                     <FormItem className="col-span-2">
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter student email" {...field} />
+                        <Input
+                          disabled={isUserEditMutating}
+                          placeholder="Enter student email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <PhoneInput
-                        international
-                        defaultCountry="MM"
-                        disabled={
-                          isCreateUserMutating ||
-                          isAssignStudentToFacultyMutating
-                        }
-                        className="shadow-none"
-                        placeholder="Enter a phone number"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                /> */}
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="phone"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            placeholder="6+ characters"
-                            className="pr-6"
-                            {...field}
-                            type={isPasswordVisible ? 'text' : 'password'}
-                          />
-                          <div className="absolute inset-y-0 right-0 flex h-full items-center justify-center p-1">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              type="button"
-                              className="size-7"
-                              onClick={() =>
-                                togglePasswordVisible(!isPasswordVisible)
-                              }
-                            >
-                              {isPasswordVisible ? (
-                                <EyeClosed className="size-5" />
-                              ) : (
-                                <Eye className="size-5" />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
+                        <PhoneInput
+                          disabled={isUserEditMutating}
+                          international
+                          defaultCountry="MM"
+                          className="shadow-none"
+                          placeholder="Enter a phone number"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -340,8 +342,18 @@ const EditStudent = () => {
             </form>
           </Form>
           <div className="flex justify-end gap-3">
-            <Button variant="secondary">Reset</Button>
-            <Button form="edit-student-form" type="submit">
+            <Button
+              disabled={isUserEditMutating}
+              onClick={handleResetForm}
+              variant="secondary"
+            >
+              Reset
+            </Button>
+            <Button
+              loading={isUserEditMutating}
+              form="edit-student-form"
+              type="submit"
+            >
               Update
             </Button>
           </div>
