@@ -1,16 +1,10 @@
-import Link from 'next/link'
 import { ColumnDef } from '@tanstack/react-table'
 import { UserWithOptionalFaculty } from '@/features/users/types'
-import { ChevronsUpDown, PencilLine, Trash2, View } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { ChevronsUpDown } from 'lucide-react'
+
+import RowActions from './row-actions'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import RowActions from './row-actions'
 
 export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   {

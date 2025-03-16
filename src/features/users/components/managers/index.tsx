@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from './header'
-import CoordinatorList from './coordinator-list'
+import CoordinatorList from './manager-list'
 
 const Managers = () => {
   return (
