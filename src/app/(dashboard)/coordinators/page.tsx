@@ -1,7 +1,14 @@
 import React from 'react'
+import { Metadata } from 'next'
+import Coordinators from '@/features/users/components/coordinators'
+
+export const metadata: Metadata = {
+  title: 'Coordinators',
+  description: 'Explore the list of coordinators',
+}
 
 const CoordinatorsPage = () => {
-  return <div>CoordinatorsPage</div>
+  return <Coordinators />
 }
 
 export default CoordinatorsPage
