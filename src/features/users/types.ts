@@ -14,9 +14,14 @@ export type User = {
   updatedAt: string
 }
 
+export type UserWithOptionalFaculty = User & {
+  StudentFaculty?: StudentFaculty
+  Faculty?: Faculty
+}
+
 export type GetUsersResponse = {
   message: string
-  result: User[]
+  result: UserWithOptionalFaculty[]
 }
 
 export type CreateUserPayload = {

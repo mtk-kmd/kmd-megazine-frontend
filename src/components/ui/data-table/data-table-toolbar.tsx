@@ -9,6 +9,7 @@ import { DataTableViewOptions } from './data-table-view-options'
 
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { useEffect, useState } from 'react'
+import DataTableFacultyFilter from './data-table-faculty-filter'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -70,13 +71,7 @@ export function DataTableToolbar<TData>({
           searchLabel={searchLabel}
           onChange={(value) => setGlobalFilter(String(value))}
         />
-        {/* {table.getColumn("status") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
-          />
-        )} */}
+        {table.getColumn('faculty') && <DataTableFacultyFilter table={table} />}
 
         {isFiltered && (
           <Button
