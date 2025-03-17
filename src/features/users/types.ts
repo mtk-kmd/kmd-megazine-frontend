@@ -75,7 +75,7 @@ export type StudentFaculty = {
 
 export type GetUserApiResponse = {
   message: string
-  result: User & { StudentFaculty: StudentFaculty }
+  result: UserWithOptionalFaculty
 }
 
 export type CreateUserApiResponse = {

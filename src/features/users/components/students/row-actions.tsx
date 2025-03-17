@@ -31,9 +31,11 @@ const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
     <div className="flex">
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <View strokeWidth={1.2} className="font size-5 text-green-600" />
-          </Button>
+          <Link href={`/students/${row.user_id}`}>
+            <Button variant="ghost" size="icon">
+              <View strokeWidth={1.2} className="font size-5 text-green-600" />
+            </Button>
+          </Link>
         </TooltipTrigger>
         <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
           View

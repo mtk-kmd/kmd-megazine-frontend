@@ -36,9 +36,12 @@ import {
 } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { ROLE } from '@/utils/constants'
-import { PhoneInput } from '@/components/ui/phone-input'
-import { StudentFaculty, User, UserEditPayload } from '../../types'
 import { useQueryClient } from '@tanstack/react-query'
+import { PhoneInput } from '@/components/ui/phone-input'
+import {
+  UserEditPayload,
+  UserWithOptionalFaculty,
+} from '@/features/users/types'
 
 const EditStudent = () => {
   const session = useSession()
@@ -78,19 +81,17 @@ const EditStudent = () => {
     !!accessToken
   )
 
-  const resetForm = (user: User & { StudentFaculty: StudentFaculty }) => {
+  const resetForm = (user: UserWithOptionalFaculty) => {
     form.reset({
       user_id: user.user_id,
       user_name: user.user_name,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-      phone: user.phone ? user.phone : '',
+      phone: user.phone || '',
       role: user.role?.role_id || ROLE['student'],
       status: user.status,
-      faculty_id: user.StudentFaculty.faculty_id
-        ? user.StudentFaculty.faculty_id.toString()
-        : '',
+      faculty_id: user.StudentFaculty?.faculty_id?.toString() || '',
     })
   }
 
