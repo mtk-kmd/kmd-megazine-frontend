@@ -1,7 +1,8 @@
 import React from 'react'
+import StudentDetial from '@/features/users/components/student-detail'
 
 const StudentDetailPage = () => {
-  return <div>StudentDetailPage</div>
+  return <StudentDetial />
 }
 
 export default StudentDetailPage
