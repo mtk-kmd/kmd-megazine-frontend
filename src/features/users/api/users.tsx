@@ -9,6 +9,7 @@ import {
   GetUserApiResponse,
   CreateUserApiResponse,
   AssignStudentToFacultyResponse,
+  UpdateFacultyPayload,
 } from '../types'
 
 const getUsers = async ({ token, role }: { token: string; role: string }) => {
@@ -215,6 +216,28 @@ export const useAssignStudentToFaculty = (token: string) => {
   })
 }
 
+const updateFaculty = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: UpdateFacultyPayload
+}) => {
+  try {
+    const response = await apiClient.put(`/updateFaculty`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to update faculty')
+  }
+}
+
 export const useEditUser = (token: string) => {
   return useMutation({
     mutationFn: (payload: UserEditPayload) => editUser({ token, payload }),
@@ -235,6 +258,16 @@ export const useDeleteUser = (token: string) => {
     },
     onError(error, variables, context) {
       toast.error(error.message)
+    },
+  })
+}
+
+export const useUpdateFaculty = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: UpdateFacultyPayload) =>
+      updateFaculty({ token, payload }),
+    onError(error, variables, context) {
+      toast.error(error.message, { position: 'top-right' })
     },
   })
 }

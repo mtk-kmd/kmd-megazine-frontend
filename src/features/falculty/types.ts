@@ -37,3 +37,19 @@ export type FacultyApiResponseType = {
   message: string
   result: FacultyResponseItem[]
 }
+
+export type CreateFacultyPayload = {
+  name: string
+  coordinator_id: null | number
+}
+
+export type CreatedFacultyResponse = {
+  message: string
+  result: {
+    faculty_id: number
+    name: string
+    coordinator_id: number | null
+    createdAt: string
+    updatedAt: string
+  }
+}
