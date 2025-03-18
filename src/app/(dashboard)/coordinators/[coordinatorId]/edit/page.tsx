@@ -1,7 +1,8 @@
 import React from 'react'
+import EditCoordinator from '@/features/users/components/edit-coordinator'
 
 const CoordinatorEditPage = () => {
-  return <div>CoordinatorEditPage</div>
+  return <EditCoordinator />
 }
 
 export default CoordinatorEditPage

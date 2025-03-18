@@ -89,3 +89,9 @@ export type CreateUserApiResponse = {
 export type AssignStudentToFacultyResponse = {
   message: string
 }
+
+export type UpdateFacultyPayload = {
+  faculty_id: number
+  name: string
+  coordinator_id: number
+}
