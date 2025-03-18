@@ -20,7 +20,10 @@ const getUsers = async ({ token, role }: { token: string; role: string }) => {
     })
 
     const studentData = response.data.result.filter(
-      (user) => user.role && user.role.role_name.toLowerCase() === role
+      (user) =>
+        user.role &&
+        user.role.role_name.toLowerCase() === role &&
+        user.status === true
     )
 
     return studentData
