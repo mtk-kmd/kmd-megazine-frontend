@@ -5,11 +5,10 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import {
   GetUsersResponse,
   CreateUserPayload,
+  UserEditPayload,
+  GetUserApiResponse,
   CreateUserApiResponse,
   AssignStudentToFacultyResponse,
-  GetUserApiResponse,
-  User,
-  UserEditPayload,
 } from '../types'
 
 const getUsers = async ({ token, role }: { token: string; role: string }) => {
@@ -107,6 +106,31 @@ const editUser = async ({
   }
 }
 
+const deleteUser = async ({
+  token,
+  user_id,
+}: {
+  token: string
+  user_id: number
+}) => {
+  try {
+    const response = await apiClient.delete(`/deleteUser`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        user_id: user_id,
+      },
+    })
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to delete user')
+  }
+}
+
 const assignStudentToFaculty = async ({
   token,
   payload,
@@ -196,6 +220,18 @@ export const useEditUser = (token: string) => {
     },
     onError(error, variables, context) {
       toast.error(error.message, { position: 'top-right' })
+    },
+  })
+}
+
+export const useDeleteUser = (token: string) => {
+  return useMutation({
+    mutationFn: (user_id: number) => deleteUser({ token, user_id }),
+    onSuccess(data, variables, context) {
+      toast.success('User deleted successfully')
+    },
+    onError(error, variables, context) {
+      toast.error(error.message)
     },
   })
 }

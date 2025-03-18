@@ -70,7 +70,7 @@ const AddStudent: React.FC<{
   onOpenChange: (open: boolean) => void
 }> = ({ open, onOpenChange }) => {
   const session = useSession()
-  const apolloClient = useQueryClient()
+  const queryClient = useQueryClient()
 
   const accessToken = session?.data?.user?.token as string
   const { mutate: createUserMutate, isPending: isCreateUserMutating } =
@@ -116,7 +116,7 @@ const AddStudent: React.FC<{
             },
             {
               async onSuccess(data, variables, context) {
-                await apolloClient.invalidateQueries({
+                await queryClient.invalidateQueries({
                   queryKey: ['users', 'role', 'student'],
                 })
                 handleOnDismiss(false)

@@ -12,20 +12,43 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogDescription,
 } from '@/components/ui/alert-dialog'
+import { useSession } from 'next-auth/react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useDeleteUser } from '@/features/users/api/users'
 
 const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
+  const session = useSession()
+  const queryClient = useQueryClient()
+  const accessToken = session?.data?.user?.token as string
+
+  const { mutate: deleteUserMutate, isPending: isDeleteUserMutating } =
+    useDeleteUser(accessToken)
+
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   const handleDeleteOpen = (open: boolean) => {
-    setIsDeleteOpen(open)
+    if (!isDeleteUserMutating) {
+      setIsDeleteOpen(open)
+    }
   }
 
-  const handleDeleteUser = async () => {}
+  const handleDeleteUser = () => {
+    deleteUserMutate(Number(row.user_id), {
+      async onSuccess(data, variables, context) {
+        await queryClient.invalidateQueries({
+          queryKey: ['users', 'role', 'student'],
+        })
+      },
+      onSettled(data, error, variables, context) {
+        handleDeleteOpen(false)
+      },
+    })
+  }
 
   return (
     <div className="flex">
@@ -80,8 +103,12 @@ const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button onClick={handleDeleteUser}>Delete</Button>
+            <AlertDialogCancel disabled={isDeleteUserMutating}>
+              Cancel
+            </AlertDialogCancel>
+            <Button loading={isDeleteUserMutating} onClick={handleDeleteUser}>
+              Delete
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
