@@ -230,6 +230,7 @@ const AddCoordinator: React.FC<{
             Fill in the details below to add a new coordinator to the system.
           </DrawerDescription>
         </DrawerHeader>
+
         <Form {...form}>
           <form
             id="add-student-form"
@@ -343,11 +344,6 @@ const AddCoordinator: React.FC<{
                 )}
               />
 
-              <AddFaculty
-                open={isFacultyAddOpen}
-                onOpenChange={handleIsFacultyAddOpen}
-              />
-
               <FormField
                 control={form.control}
                 name="email"
@@ -452,6 +448,11 @@ const AddCoordinator: React.FC<{
             Submit
           </Button>
         </DrawerFooter>
+
+        <AddFaculty
+          open={isFacultyAddOpen}
+          onOpenChange={handleIsFacultyAddOpen}
+        />
       </DrawerContent>
     </Drawer>
   )

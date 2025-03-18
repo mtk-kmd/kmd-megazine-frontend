@@ -33,7 +33,7 @@ const getFalculties = async ({
 
 export const useGetFalculties = (token: string, enabled: boolean = false) => {
   return useQuery({
-    queryKey: ['falculties'],
+    queryKey: ['faculties'],
     queryFn: () => getFalculties({ token }),
     enabled: enabled,
   })
