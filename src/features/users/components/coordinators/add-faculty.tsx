@@ -58,7 +58,7 @@ const AddFaculty: React.FC<{
   const onSubmit = (values: z.infer<typeof createFacultySchema>) => {
     createFacultyMutate(values, {
       async onSuccess(data, variables, context) {
-        await queryClient.invalidateQueries({ queryKey: ['falculties'] })
+        await queryClient.invalidateQueries({ queryKey: ['faculties'] })
       },
       onError(error, variables, context) {
         toast.error(error.message)
@@ -80,7 +80,9 @@ const AddFaculty: React.FC<{
             <CircleAlertIcon className="opacity-80" size={16} />
           </div>
           <DialogHeader>
-            <DialogTitle className="sm:text-center">New Faculty</DialogTitle>
+            <DialogTitle className="sm:text-center">
+              Add New Faculty
+            </DialogTitle>
             <DialogDescription className="sm:text-center">
               Please enter the faculty details below to add a new faculty
               member.
