@@ -1,13 +1,11 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const Header = () => {
-  const [isAddFormOpen, setIsAddFormOpen] = useState(false)
-
-  const handleAddFormOpen = (open: boolean) => {
-    setIsAddFormOpen(open)
+  const handleAddFormOpen = () => {
+    // TODO: Implement form opening logic
   }
 
   return (
@@ -19,7 +17,7 @@ const Header = () => {
         </p>
       </div>
       <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        <Button onClick={() => handleAddFormOpen(true)} size="sm">
+        <Button onClick={() => handleAddFormOpen()} size="sm">
           <Plus className="size-5" />
           Add New
         </Button>

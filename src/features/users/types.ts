@@ -14,6 +14,13 @@ export type User = {
   updatedAt: string
 }
 
+export type Student = {
+    user_id: number
+    user_name: string
+    email: string
+    createdAt: string
+}
+
 export type GetUsersResponse = {
   message: string
   result: User[]

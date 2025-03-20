@@ -89,7 +89,7 @@ const EditStudent = () => {
         faculty_id: '',
       })
     }
-  }, [isSuccess, data, isFetching])
+  }, [isSuccess, data, isFetching, form])
 
   const onSubmit = async (values: z.infer<typeof editStudentSchema>) => {
     console.log(values)
@@ -120,7 +120,7 @@ const EditStudent = () => {
                 <CommandItem
                   key={faculty.faculty_id}
                   value={faculty.name}
-                  onSelect={(value) => {
+                  onSelect={() => {
                     form.setValue('faculty_id', faculty.faculty_id.toString(), {
                       shouldValidate: true,
                     })

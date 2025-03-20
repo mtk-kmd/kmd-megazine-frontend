@@ -51,7 +51,6 @@ import {
   useAssignStudentToFaculty,
 } from '@/features/users/api/users'
 import { ROLE } from '@/utils/constants'
-import { PhoneInput } from '@/components/ui/phone-input'
 import { useQueryClient } from '@tanstack/react-query'
 
 const initialStudentFormValues = {
@@ -108,14 +107,14 @@ const AddStudent: React.FC<{
         last_name: values.last_name,
       },
       {
-        onSuccess(data, variables, context) {
+        onSuccess(data) {
           assignStudentToFacultyMutate(
             {
               faculty_id: parseInt(values.faculty_id),
               student_id: data.result.user.user_id,
             },
             {
-              async onSuccess(data, variables, context) {
+              async onSuccess() {
                 await apolloClient.invalidateQueries({
                   queryKey: ['users', 'role', 'student'],
                 })
@@ -161,7 +160,7 @@ const AddStudent: React.FC<{
                 <CommandItem
                   key={faculty.faculty_id}
                   value={faculty.name}
-                  onSelect={(value) => {
+                  onSelect={() => {
                     form.setValue('faculty_id', faculty.faculty_id.toString(), {
                       shouldValidate: true,
                     })

@@ -42,11 +42,12 @@ apiClient.interceptors.response.use(
     // Check if detail is an array
     if (_.isArray(detail)) {
       // If it is an array, map over each item to create a list of error messages
-      let messages = detail.map((item: any) => {
-        const field = item.loc?.[1].replace('_', ' ')
+        const messages = detail.map((item: { loc?: (string | number)[]; input?: string }) => {
+        const fieldValue = item.loc?.[1]
+        const field = typeof fieldValue === 'string' ? fieldValue.replace('_', ' ') : fieldValue
         return `The ${field} - (${item.input}) is not valid.`
       })
-      // Combime them into single message
+      // Combine them into single message
       message = messages.join(' ')
     } else if (_.isString(detail)) {
       // If it a string, assign directly to message

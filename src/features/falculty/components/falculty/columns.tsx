@@ -76,8 +76,7 @@ export const columns: ColumnDef<Faculty>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const payment = row.original
+    cell: () => {
       return (
         <div className="flex">
           <Tooltip>
