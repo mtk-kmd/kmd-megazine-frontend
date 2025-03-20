@@ -47,5 +47,5 @@ jobs:
             echo "NEXT_PUBLIC_API_URL=https://megazine-api.mtktechlab.com/api" >> .env.local
             echo "NEXTAUTH_SECRET=y7U3!mL9&vP@xD1#qZt$GkN5*oWfB^r8HsC2JnMfAeDhGkKjNnQrTtWwZzCcVfXj" >> .env.local
             docker buildx build --platform linux/amd64 -t mtk246/${{ github.event.repository.name }}:${{ github.ref_name }} --load .
-            docker-compose --env-file .env down || true
-            docker-compose --env-file .env up -d
+            docker-compose --env-file .env.local down || true
+            docker-compose --env-file .env.local up -d
