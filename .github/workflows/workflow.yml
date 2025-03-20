@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "NEXTAUTH_SECRET=y7U3!mL9&vP@xD1#qZt$GkN5*oWfB^r8HsC2JnMfAeDhGkKjNnQrTtWwZzCcVfXj" >> .env.local
           echo "NEXT_PUBLIC_API_URL=https://megazine-api.mtktechlab.com/api" >> .env.local
-          echo "NEXTAUTH_URL=http://192.168.86.128:4700" >> .env.local
+          echo "NEXTAUTH_URL=https://megazine.mtktechlab.com" >> .env.local
 
 
       # Step 3: SSH to server and deploy
@@ -46,7 +46,7 @@ jobs:
             echo "REPO_NAME=${{ github.event.repository.name }}" > .env.local
             echo "REF_NAME=${{ github.ref_name }}" >> .env.local
             echo "NEXT_PUBLIC_API_URL=https://megazine-api.mtktechlab.com/api" >> .env.local
-            echo "NEXTAUTH_URL=http://192.168.86.128:4700" >> .env.local
+            echo "NEXTAUTH_URL=https://megazine.mtktechlab.com" >> .env.local
             echo "NEXTAUTH_SECRET=y7U3!mL9&vP@xD1#qZt$GkN5*oWfB^r8HsC2JnMfAeDhGkKjNnQrTtWwZzCcVfXj" >> .env.local
             docker buildx build --platform linux/amd64 -t mtk246/${{ github.event.repository.name }}:${{ github.ref_name }} --load .
             docker-compose --env-file .env.local down || true
