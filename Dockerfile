@@ -5,6 +5,6 @@ COPY . .
 RUN npm install --legacy-peer-deps
 RUN npm cache clean --force
 
-EXPOSE 4700
+EXPOSE 3000
 
 CMD ["npm", "run", "dev"]
