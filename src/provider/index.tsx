@@ -12,7 +12,7 @@ const Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         {children}
         <Toaster />
       </QueryClientProvider>

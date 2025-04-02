@@ -6,6 +6,7 @@ import {
   CreateFacultyPayload,
   FacultyApiResponseType,
   FacultyResponseItem,
+  GetFacultyResponse,
 } from '../types'
 
 const getFalculties = async ({
@@ -29,6 +30,43 @@ const getFalculties = async ({
     }
     throw new Error('Failed to retrieve falculty information.')
   }
+}
+
+const getFaculty = async ({
+  token,
+  faculty_id,
+}: {
+  token: string
+  faculty_id: number
+}): Promise<GetFacultyResponse> => {
+  try {
+    const response = await apiClient.get<GetFacultyResponse>(
+      `/getFaculty/${faculty_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to retrieve falculty detail.')
+  }
+}
+
+export const useGetFaculty = (
+  token: string,
+  faculty_id: number,
+  enabled: boolean = false
+) => {
+  return useQuery({
+    queryKey: ['faculty', faculty_id],
+    queryFn: () => getFaculty({ token, faculty_id }),
+    enabled: enabled,
+  })
 }
 
 export const useGetFalculties = (token: string, enabled: boolean = false) => {
