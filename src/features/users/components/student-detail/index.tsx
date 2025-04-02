@@ -7,9 +7,15 @@ import {
   Calendar,
   Download,
   Eye,
+  FileText,
+  GraduationCap,
+  Mail,
   PaperclipIcon,
   PencilLine,
+  Phone,
   Trash2,
+  User,
+  UserCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -24,6 +30,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { mockContributions } from '../../utils/data'
 import { Badge } from '@/components/ui/badge'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 const StudentDetail = () => {
   const session = useSession()
@@ -108,39 +119,48 @@ const StudentDetail = () => {
         <div className="border-t border-input/75">
           <dl className="divide-y divide-input/75">
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <User className="h-4 w-4" />
                 Username
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
                 {user.user_name}
               </dd>
             </div>
+
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <UserCircle className="h-4 w-4" />
                 First Name
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
                 {user.first_name}
               </dd>
             </div>
+
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <UserCircle className="h-4 w-4" />
                 Last Name
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
                 {user.last_name}
               </dd>
             </div>
+
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <Mail className="h-4 w-4" />
                 Email address
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
                 {user.email}
               </dd>
             </div>
+
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <Phone className="h-4 w-4" />
                 Phone
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
@@ -149,17 +169,23 @@ const StudentDetail = () => {
             </div>
 
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+              <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                <GraduationCap className="h-4 w-4" />
                 Faculty
               </dt>
               <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
                 {user.StudentFaculty?.faculty?.name ?? 'N/A'}
               </dd>
             </div>
+
             <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
-                Contributions
-              </dt>
+              <div>
+                <dt className="flex items-center gap-2 text-sm/6 font-medium text-secondary-foreground">
+                  <FileText className="h-4 w-4" />
+                  Contributions
+                </dt>
+              </div>
+
               <dd className="mt-2 text-sm text-secondary-foreground sm:col-span-3 sm:mt-0">
                 {mockContributions.length > 0 ? (
                   <ul className="divide-y divide-input/75 rounded-md border border-input/75">
@@ -194,10 +220,16 @@ const StudentDetail = () => {
                             </div>
                           </div>
 
-                          <Button>
-                            <Download className="size-3.5" />
-                            Download
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button size="icon" variant="outline">
+                                <Download className="size-3.5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="font-semibold">
+                              Download
+                            </TooltipContent>
+                          </Tooltip>
                         </div>
                       </div>
                     ))}

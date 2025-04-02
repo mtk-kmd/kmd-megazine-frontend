@@ -4,15 +4,35 @@ import React from 'react'
 import { columns } from './columns'
 import { sampleFalcultyData } from '../../data'
 import { DataTable } from '@/components/ui/data-table'
+import { useGetFalculties } from '@/features/falculty/api/falculty'
+import { useSession } from 'next-auth/react'
 
 const FalcultyList = () => {
-  return (
-    <DataTable
-      columns={columns}
-      data={sampleFalcultyData}
-      searchLabel="Search by name"
-    />
-  )
+  const session = useSession()
+  const accessToken = session.data?.user.token as string
+
+  const {
+    error,
+    isSuccess,
+    data = [],
+    isFetching,
+  } = useGetFalculties(accessToken, !!accessToken)
+
+  if (isFetching) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>{error.message}</div>
+  }
+
+  if (isSuccess) {
+    return (
+      <DataTable data={data} columns={columns} searchLabel="Search by name" />
+    )
+  }
+
+  return null
 }
 
 export default FalcultyList

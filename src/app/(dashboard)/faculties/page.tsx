@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import Falculty from '@/features/falculty/components/falculty'
+import { Falculty } from '@/features/falculty/components'
 
 export const metadata: Metadata = {
   title: 'Faculties',
