@@ -191,7 +191,7 @@ const EditStudent = () => {
         <div className="mx-auto flex w-full max-w-md flex-col gap-5">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
-              <h1 className="text-base font-semibold">Edit Student</h1>
+              <h1 className="text-lg font-semibold">Edit Student</h1>
               <p className="mt-2 text-sm">
                 Update the details of the student in your institute.
               </p>

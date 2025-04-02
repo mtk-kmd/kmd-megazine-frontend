@@ -30,9 +30,11 @@ const RowActions: React.FC<{ row: FacultyResponseItem }> = ({ row }) => {
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <PencilLine strokeWidth={1.2} className="size-5 text-blue-600" />
-          </Button>
+          <Link href={`/faculties/${row.faculty_id}/edit`}>
+            <Button variant="ghost" size="icon">
+              <PencilLine strokeWidth={1.2} className="size-5 text-blue-600" />
+            </Button>
+          </Link>
         </TooltipTrigger>
         <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
           Edit

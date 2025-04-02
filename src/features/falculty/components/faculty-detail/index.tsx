@@ -3,6 +3,7 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
 import { useGetFaculty } from '@/features/falculty/api/falculty'
+import { GraduationCap, IdCard, User, Users } from 'lucide-react'
 
 const FacultyDetail = () => {
   const session = useSession()
@@ -40,38 +41,36 @@ const FacultyDetail = () => {
           </div>
         </div>
         <div className="border-t border-input/75">
-          <dl className="divide-y divide-input/75">
-            <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+          <dl className="divide-y divide-border text-sm text-muted-foreground">
+            <div className="grid grid-cols-1 py-4 sm:grid-cols-4 sm:gap-4">
+              <dt className="flex items-center gap-2 font-medium text-secondary-foreground">
+                <GraduationCap className="h-4 w-4" />
                 Faculty Name
               </dt>
-              <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
-                {faculty.name}
-              </dd>
+              <dd className="sm:col-span-3">{faculty.name}</dd>
             </div>
-            <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+            <div className="grid grid-cols-1 py-4 sm:grid-cols-4 sm:gap-4">
+              <dt className="flex items-center gap-2 font-medium text-secondary-foreground">
+                <IdCard className="h-4 w-4" />
                 Coordinator ID
               </dt>
-              <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
-                {faculty.coordinator_id}
-              </dd>
+              <dd className="sm:col-span-3">{faculty.coordinator_id}</dd>
             </div>
-            <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+            <div className="grid grid-cols-1 py-4 sm:grid-cols-4 sm:gap-4">
+              <dt className="flex items-center gap-2 font-medium text-secondary-foreground">
+                <User className="h-4 w-4" />
                 Coordinator Name
               </dt>
-              <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
+              <dd className="sm:col-span-3">
                 {faculty.coordinator?.user_name}
               </dd>
             </div>
-            <div className="py-3 sm:grid sm:grid-cols-4 sm:gap-4">
-              <dt className="text-sm/6 font-medium text-secondary-foreground">
+            <div className="grid grid-cols-1 py-4 sm:grid-cols-4 sm:gap-4">
+              <dt className="flex items-center gap-2 font-medium text-secondary-foreground">
+                <Users className="h-4 w-4" />
                 Total Students
               </dt>
-              <dd className="mt-1 text-sm/6 text-secondary-foreground/75 sm:col-span-3 sm:mt-0">
-                {faculty.students.length || 0}
-              </dd>
+              <dd className="sm:col-span-3">{faculty.students.length || 0}</dd>
             </div>
           </dl>
         </div>

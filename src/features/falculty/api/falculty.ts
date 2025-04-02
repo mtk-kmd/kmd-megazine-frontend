@@ -8,6 +8,8 @@ import {
   FacultyResponseItem,
   GetFacultyResponse,
 } from '../types'
+import { editFacultySchema } from '../utils/validator'
+import { UpdateFacultyPayload } from '@/features/users/types'
 
 const getFalculties = async ({
   token,
@@ -41,7 +43,7 @@ const getFaculty = async ({
 }): Promise<GetFacultyResponse> => {
   try {
     const response = await apiClient.get<GetFacultyResponse>(
-      `/getFaculty/${faculty_id}`,
+      `/getFaculty?faculty_id=${faculty_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -74,6 +76,7 @@ export const useGetFalculties = (token: string, enabled: boolean = false) => {
     queryKey: ['faculties'],
     queryFn: () => getFalculties({ token }),
     enabled: enabled,
+    refetchOnWindowFocus: false,
   })
 }
 
