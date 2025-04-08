@@ -233,7 +233,7 @@ const AddCoordinator: React.FC<{
 
         <Form {...form}>
           <form
-            id="add-student-form"
+            id="add-coordinator-form"
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex-1 overflow-y-auto"
           >
@@ -441,7 +441,7 @@ const AddCoordinator: React.FC<{
           <Button
             type="submit"
             className="lg:flex-1"
-            form="add-student-form"
+            form="add-coordinator-form"
             disabled={isGetFalcultiesFetching}
             loading={isCreateUserMutating || isUpdateFacultyMutating}
           >
