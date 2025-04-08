@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip'
 import { formatDate } from '@/lib/utils'
 import { UserWithOptionalFaculty } from '@/features/users/types'
+import RowActions from './row-actions'
 
 export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   {
@@ -56,20 +57,7 @@ export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      return (
-        <div className="flex">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Trash2 strokeWidth={1.2} className="size-5 text-red-600" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              Delete
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      )
+      return <RowActions row={row.original} />
     },
   },
 ]
