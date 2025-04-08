@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import AddManager from './add-manager'
 
 const Header = () => {
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
@@ -24,6 +25,7 @@ const Header = () => {
           Add New
         </Button>
       </div>
+      <AddManager open={isAddFormOpen} onOpenChange={handleAddFormOpen} />
     </div>
   )
 }

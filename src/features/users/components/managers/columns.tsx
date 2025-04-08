@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/tooltip'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import RowActions from './row-actions'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -70,51 +71,8 @@ export const columns: ColumnDef<User>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const student = row.original
-      return (
-        <div className="flex">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <View
-                  strokeWidth={1.2}
-                  className="font size-5 text-green-600"
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              View
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href={`/students/${student.user_id}/edit`}>
-                <Button variant="ghost" size="icon">
-                  <PencilLine
-                    strokeWidth={1.2}
-                    className="size-5 text-blue-600"
-                  />
-                </Button>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              Edit
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Trash2 strokeWidth={1.2} className="size-5 text-red-600" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              Delete
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      )
+      const user = row.original
+      return <RowActions row={user} />
     },
   },
 ]

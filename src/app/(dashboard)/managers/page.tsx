@@ -3,8 +3,8 @@ import { Metadata } from 'next'
 import Managers from '@/features/users/components/managers'
 
 export const metadata: Metadata = {
-  title: 'Students',
-  description: 'Explore the list of students',
+  title: 'Managers',
+  description: 'Explore the list of managers',
 }
 
 const ManagersPage = () => {
