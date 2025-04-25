@@ -1,55 +1,43 @@
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import RowActions from './row-actions'
+import { ChevronsUpDown } from 'lucide-react'
+import { cn, formatDate } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
-import { Faculty } from '@/features/falculty/types'
-import { ChevronsUpDown, PencilLine, Trash2, View } from 'lucide-react'
+import { FacultyResponseItem } from '@/features/falculty/types'
 
-export const columns: ColumnDef<Faculty>[] = [
+export const columns: ColumnDef<FacultyResponseItem>[] = [
   {
-    accessorKey: 'id',
-    header: 'No.',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('id')}</div>,
-  },
-  {
-    accessorKey: 'facultyName',
-    filterFn: 'includesString',
+    accessorKey: 'ID',
+    accessorFn: (row) => row.faculty_id,
+    id: 'faculty_id',
     header: ({ column }) => {
       return (
         <div
-          className="flex items-center gap-10 text-left"
+          className="flex items-center gap-4 text-left"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Faculty Name
+          ID
           <ChevronsUpDown size={16} />
         </div>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('facultyName')}</div>,
   },
   {
-    accessorKey: 'coordinatorId',
-    header: 'Coordinator ID',
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('coordinatorId')}</div>
-    ),
+    accessorKey: 'name',
+    filterFn: 'includesString',
+    header: ({ column }) => {
+      return (
+        <div className="flex items-center gap-10 text-left">Faculty Name</div>
+      )
+    },
+    cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
   },
   {
-    accessorKey: 'coordinatorName',
-    header: 'Coordinator Name',
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('coordinatorName')}</div>
-    ),
-  },
-  {
-    accessorKey: 'studentCount',
+    id: 'student-count',
+    accessorFn: (row) => row.students.length,
     header: ({ column }) => {
       return (
         <div
-          className="flex items-center gap-10 text-left"
+          className="flex items-center gap-4 text-left"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Student Count
@@ -57,68 +45,48 @@ export const columns: ColumnDef<Faculty>[] = [
         </div>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('studentCount')}</div>,
-  },
-  {
-    accessorKey: 'totalContributions',
-    header: ({ column }) => {
+    cell: ({ row }) => {
+      const studentCount = row.original.students.length || 0
       return (
         <div
-          className="flex items-center gap-10 text-left"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className={cn(
+            'font-medium capitalize',
+            !studentCount && 'text-muted-foreground'
+          )}
         >
-          Total Contributions
-          <ChevronsUpDown size={16} />
+          {studentCount ? studentCount : 'No'} Students
         </div>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('totalContributions')}</div>,
+  },
+  {
+    id: 'coordinator',
+    header: 'Coordinator Name',
+    cell: ({ row }) => {
+      return (
+        <div key={row.original?.coordinator?.user_id}>
+          {row.original?.coordinator
+            ? row.original?.coordinator.user_name
+            : 'N/A'}
+        </div>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    cell: ({ row }) => {
+      const createdAt = formatDate(row.getValue('createdAt'))
+      return (
+        <div className="font-medium text-secondary-foreground">{createdAt}</div>
+      )
+    },
   },
   {
     id: 'actions',
-    cell: () => {
-      return (
-        <div className="flex">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <View
-                  strokeWidth={1.2}
-                  className="font size-5 text-green-600"
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              View
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <PencilLine
-                  strokeWidth={1.2}
-                  className="size-5 text-blue-600"
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              Edit
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Trash2 strokeWidth={1.2} className="size-5 text-red-600" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
-              Delete
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      )
+    cell: ({ row }) => {
+      return <RowActions row={row.original} />
     },
   },
 ]

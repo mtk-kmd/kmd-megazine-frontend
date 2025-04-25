@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
 import { useEffect, useState } from 'react'
+import DataTableFacultyFilter from './data-table-faculty-filter'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -68,13 +69,10 @@ export function DataTableToolbar<TData>({
           searchLabel={searchLabel}
           onChange={(value) => setGlobalFilter(String(value))}
         />
-        {/* {table.getColumn("status") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
-          />
-        )} */}
+
+        {table.getAllColumns().find((column) => column.id === 'faculty') && (
+          <DataTableFacultyFilter table={table} />
+        )}
 
         {isFiltered && (
           <Button

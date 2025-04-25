@@ -69,7 +69,7 @@ const AddStudent: React.FC<{
   onOpenChange: (open: boolean) => void
 }> = ({ open, onOpenChange }) => {
   const session = useSession()
-  const apolloClient = useQueryClient()
+  const queryClient = useQueryClient()
 
   const accessToken = session?.data?.user?.token as string
   const { mutate: createUserMutate, isPending: isCreateUserMutating } =
@@ -114,8 +114,8 @@ const AddStudent: React.FC<{
               student_id: data.result.user.user_id,
             },
             {
-              async onSuccess() {
-                await apolloClient.invalidateQueries({
+              async onSuccess(data, variables, context) {
+                await queryClient.invalidateQueries({
                   queryKey: ['users', 'role', 'student'],
                 })
                 handleOnDismiss(false)
@@ -333,7 +333,7 @@ const AddStudent: React.FC<{
                   </FormItem>
                 )}
               />
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
@@ -355,7 +355,7 @@ const AddStudent: React.FC<{
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="password"

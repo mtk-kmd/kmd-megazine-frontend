@@ -2,6 +2,7 @@
 import React from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import AddCoordinator from './add-coordinator'
 
 const Header = () => {
   const handleAddFormOpen = () => {
@@ -21,6 +22,7 @@ const Header = () => {
           <Plus className="size-5" />
           Add New
         </Button>
+        <AddCoordinator open={isAddFormOpen} onOpenChange={handleAddFormOpen} />
       </div>
     </div>
   )

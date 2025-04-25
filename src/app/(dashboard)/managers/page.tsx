@@ -1,7 +1,14 @@
 import React from 'react'
+import { Metadata } from 'next'
+import Managers from '@/features/users/components/managers'
+
+export const metadata: Metadata = {
+  title: 'Managers',
+  description: 'Explore the list of managers',
+}
 
 const ManagersPage = () => {
-  return <div>ManagersPage</div>
+  return <Managers />
 }
 
 export default ManagersPage
