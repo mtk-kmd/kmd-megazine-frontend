@@ -192,10 +192,10 @@ export const useGetUser = (
 export const useCreateUser = (token: string) => {
   return useMutation({
     mutationFn: (payload: CreateUserPayload) => createUser({ token, payload }),
-    onSuccess(data, variables, context) {
+    onSuccess() {
       toast.success('User created successfully', { position: 'top-right' })
     },
-    onError(error, variables, context) {
+    onError(error) {
       toast.error(error.message, { position: 'top-right' })
     },
   })
@@ -205,12 +205,12 @@ export const useAssignStudentToFaculty = (token: string) => {
   return useMutation({
     mutationFn: (payload: { faculty_id: number; student_id: number }) =>
       assignStudentToFaculty({ token, payload }),
-    onSuccess(data, variables, context) {
+    onSuccess() {
       toast.success('Student assigned to faculty successfully', {
         position: 'top-right',
       })
     },
-    onError(error, variables, context) {
+    onError(error) {
       toast.error(error.message, { position: 'top-right' })
     },
   })

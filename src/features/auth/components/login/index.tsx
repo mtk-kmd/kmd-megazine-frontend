@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,7 +21,7 @@ import { Eye, EyeClosed } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-const Login = () => {
+const LoginForm = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,16 +39,21 @@ const Login = () => {
     setIsSubmitting(true)
 
     try {
-      const response: any = await signIn('credentials', {
+      const response = await signIn('credentials', {
         username: values.username,
         password: values.password,
         redirect: false,
       })
 
+      if (!response) {
+        toast.error('Authentication failed', { position: 'top-right' })
+        return
+      }
+
       if (!response.ok) {
         toast.error(response.error, { position: 'top-right' })
       } else {
-        toast.success('You’ve successfully logged in.', {
+        toast.success("You've successfully logged in.", {
           position: 'top-right',
         })
         return router.push(redirectFrom)
@@ -76,7 +81,7 @@ const Login = () => {
         <h1 className="mb-2 text-2xl font-semibold">
           👋 Welcome to Campus Chronicles!
         </h1>
-        <p className="text-muted-foreground">Let's log you in.</p>
+        <p className="text-muted-foreground">Let&apos;s log you in.</p>
       </div>
 
       <Form {...loginForm}>
@@ -161,6 +166,14 @@ const Login = () => {
         </form>
       </Form>
     </>
+  )
+}
+
+const Login = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
 

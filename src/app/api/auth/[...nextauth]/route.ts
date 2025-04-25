@@ -37,8 +37,7 @@ const handler = NextAuth({
         password: { label: 'Password*', type: 'password' },
       },
 
-      // @ts-ignore
-      async authorize(credentials, req): Promise<AuthPayload> {
+      async authorize(credentials): Promise<AuthPayload> {
         if (!credentials || !credentials.username || !credentials.password) {
           throw new Error('Missing username or password')
         }
@@ -60,6 +59,7 @@ const handler = NextAuth({
           const data = response.data
 
           return {
+            id: data.result.user_id.toString(),
             token: data.token,
             data: data.result,
           }
@@ -77,9 +77,9 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.user = user
+        token.user = user as AuthPayload
       }
 
       return token

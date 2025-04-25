@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { isValidPhoneNumber } from 'react-phone-number-input'
 
 export const addStudentSchema = z.object({
   username: z

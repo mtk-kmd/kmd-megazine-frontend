@@ -1,7 +1,5 @@
-import { Organization } from '@/hooks/types'
-import NextAuth, { User, type DefaultSession } from 'next-auth'
-
 export type AuthPayload = {
+  id: string
   token: string
   data: {
     user_id: number
@@ -23,7 +21,6 @@ declare module 'next-auth' {
   interface Session {
     user: AuthPayload
   }
-  interface User extends AuthPayload {}
 }
 
 declare module 'next-auth/jwt' {
