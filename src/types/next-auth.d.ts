@@ -1,6 +1,9 @@
+import { Organization } from '@/hooks/types'
+import NextAuth, { User, type DefaultSession } from 'next-auth'
+
 export type AuthPayload = {
-  id: string
   token: string
+  is_authenticated: boolean
   data: {
     user_id: number
     user_name: string
@@ -20,11 +23,14 @@ export type AuthPayload = {
 declare module 'next-auth' {
   interface Session {
     user: AuthPayload
+    is_authenticated: boolean
   }
+  interface User extends AuthPayload {}
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
     user: AuthPayload
+    is_authenticated: boolean
   }
 }

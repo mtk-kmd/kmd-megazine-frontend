@@ -8,8 +8,7 @@ import {
   FacultyResponseItem,
   GetFacultyResponse,
 } from '../types'
-import { editFacultySchema } from '../utils/validator'
-import { UpdateFacultyPayload } from '@/features/users/types'
+
 
 const getFalculties = async ({
   token,

@@ -40,12 +40,12 @@ const RowActions: React.FC<{ row: User }> = ({ row }) => {
 
   const handleDeleteUser = () => {
     deleteUserMutate(Number(row.user_id), {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', 'role', 'manager'],
         })
       },
-      onSettled(data, error, variables, context) {
+      onSettled() {
         handleDeleteOpen(false)
       },
     })

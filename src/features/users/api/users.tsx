@@ -241,10 +241,10 @@ const updateFaculty = async ({
 export const useEditUser = (token: string) => {
   return useMutation({
     mutationFn: (payload: UserEditPayload) => editUser({ token, payload }),
-    onSuccess(data, variables, context) {
+    onSuccess() {
       toast.success('User edited successfully', { position: 'top-right' })
     },
-    onError(error, variables, context) {
+    onError(error) {
       toast.error(error.message, { position: 'top-right' })
     },
   })
@@ -253,10 +253,10 @@ export const useEditUser = (token: string) => {
 export const useDeleteUser = (token: string) => {
   return useMutation({
     mutationFn: (user_id: number) => deleteUser({ token, user_id }),
-    onSuccess(data, variables, context) {
+    onSuccess() {
       toast.success('User deleted successfully')
     },
-    onError(error, variables, context) {
+    onError(error) {
       toast.error(error.message)
     },
   })
@@ -266,7 +266,7 @@ export const useUpdateFaculty = (token: string) => {
   return useMutation({
     mutationFn: (payload: UpdateFacultyPayload) =>
       updateFaculty({ token, payload }),
-    onError(error, variables, context) {
+    onError(error) {
       toast.error(error.message, { position: 'top-right' })
     },
   })

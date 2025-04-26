@@ -49,13 +49,13 @@ const CoordinatorDetail = () => {
 
   const handleDeleteUser = () => {
     deleteUserMutate(Number(params.coordinatorId), {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', 'role', 'marketing coordinator'],
         })
         router.push('/coordinators')
       },
-      onSettled(data, error, variables, context) {
+      onSettled() {
         handleDeleteOpen(false)
       },
     })

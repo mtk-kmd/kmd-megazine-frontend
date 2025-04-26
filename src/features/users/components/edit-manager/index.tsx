@@ -13,10 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
-import {
-  editCoordinatorSchema,
-  editManagerSchema,
-} from '@/features/users/utils/validator'
+import { editManagerSchema } from '@/features/users/utils/validator'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
@@ -86,7 +83,7 @@ const EditManager = () => {
 
   const onSubmit = async (values: z.infer<typeof editManagerSchema>) => {
     userEditMutate(_.omit(values) as UserEditPayload, {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', Number(params.managerId)],
         })

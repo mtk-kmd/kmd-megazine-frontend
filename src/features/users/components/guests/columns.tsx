@@ -1,11 +1,4 @@
-import { Trash2 } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { formatDate } from '@/lib/utils'
 import { UserWithOptionalFaculty } from '@/features/users/types'
 import RowActions from './row-actions'

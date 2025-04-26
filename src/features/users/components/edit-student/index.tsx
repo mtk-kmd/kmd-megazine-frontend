@@ -109,7 +109,7 @@ const EditStudent = () => {
 
   const onSubmit = async (values: z.infer<typeof editStudentSchema>) => {
     userEditMutate(_.omit(values, ['faculty_id']) as UserEditPayload, {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', Number(params.studentId)],
         })

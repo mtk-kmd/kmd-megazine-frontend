@@ -24,7 +24,7 @@ export const columns: ColumnDef<FacultyResponseItem>[] = [
   {
     accessorKey: 'name',
     filterFn: 'includesString',
-    header: ({ column }) => {
+    header: () => {
       return (
         <div className="flex items-center gap-10 text-left">Faculty Name</div>
       )
