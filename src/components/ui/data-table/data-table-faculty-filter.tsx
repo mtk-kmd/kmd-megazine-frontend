@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import { Table } from '@tanstack/react-table'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'

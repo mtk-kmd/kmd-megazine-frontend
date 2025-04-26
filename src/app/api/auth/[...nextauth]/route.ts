@@ -33,7 +33,7 @@ const handler = NextAuth({
         password: { label: 'Password*', type: 'password' },
       },
 
-      // @ts-ignore
+      // @ts-expect-error CredentialsProvider type mismatch
       async authorize(credentials): Promise<AuthPayload> {
         if (!credentials || !credentials.username || !credentials.password) {
           throw new Error('Missing username or password')
@@ -62,7 +62,7 @@ const handler = NextAuth({
           }
         } catch (error) {
           if (axios.isAxiosError(error) && error.response) {
-            const errorResponse = error.response.data as any
+            const errorResponse = error.response.data
 
             if (
               errorResponse.message === 'User is not verified' &&
@@ -103,7 +103,7 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.user = user
+        token.user = user as AuthPayload
         token.is_authenticated = user.is_authenticated
       }
 

@@ -49,13 +49,13 @@ const ManagerDetail = () => {
 
   const handleDeleteUser = () => {
     deleteUserMutate(Number(params.managerId), {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', 'role', 'manager'],
         })
         router.push('/managers')
       },
-      onSettled(data, error, variables, context) {
+      onSettled() {
         handleDeleteOpen(false)
       },
     })

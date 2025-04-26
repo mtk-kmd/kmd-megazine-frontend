@@ -52,6 +52,7 @@ import {
 } from '@/features/users/api/users'
 import { ROLE } from '@/utils/constants'
 import { useQueryClient } from '@tanstack/react-query'
+import { PhoneInput } from '@/components/ui/phone-input'
 
 const initialStudentFormValues = {
   username: '',
@@ -114,7 +115,7 @@ const AddStudent: React.FC<{
               student_id: data.result.user.user_id,
             },
             {
-              async onSuccess(data, variables, context) {
+              async onSuccess() {
                 await queryClient.invalidateQueries({
                   queryKey: ['users', 'role', 'student'],
                 })

@@ -96,14 +96,14 @@ const AddFaculty: React.FC<{
     createFacultyMutate(
       { ...values, coordinator_id: Number(values.coordinator_id) },
       {
-        async onSuccess(data, variables, context) {
+        async onSuccess() {
           await queryClient.invalidateQueries({
             queryKey: ['users', 'role', 'marketing coordinator'],
           })
           await queryClient.invalidateQueries({ queryKey: ['faculties'] })
           handleOnDismiss(false)
         },
-        onError(error, variables, context) {
+        onError(error) {
           toast.error(error.message)
         },
       }
@@ -158,7 +158,7 @@ const AddFaculty: React.FC<{
                 <CommandItem
                   key={coordinator.user_id}
                   value={coordinator.user_name}
-                  onSelect={(value) => {
+                  onSelect={() => {
                     addFacultyForm.setValue(
                       'coordinator_id',
                       coordinator.user_id.toString(),

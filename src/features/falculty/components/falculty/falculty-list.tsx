@@ -2,7 +2,6 @@
 import React from 'react'
 
 import { columns } from './columns'
-import { sampleFalcultyData } from '../../data'
 import { DataTable } from '@/components/ui/data-table'
 import { useGetFalculties } from '@/features/falculty/api/falculty'
 import { useSession } from 'next-auth/react'

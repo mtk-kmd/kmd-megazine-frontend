@@ -110,7 +110,7 @@ const EditCoordinator = () => {
 
   const onSubmit = async (values: z.infer<typeof editCoordinatorSchema>) => {
     userEditMutate(_.omit(values, ['faculty_id']) as UserEditPayload, {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({
           queryKey: ['users', Number(params.coordinatorId)],
         })
@@ -143,7 +143,7 @@ const EditCoordinator = () => {
                 <CommandItem
                   key={faculty.faculty_id}
                   value={faculty.name}
-                  onSelect={(value) => {
+                  onSelect={() => {
                     form.setValue('faculty_id', faculty.faculty_id.toString(), {
                       shouldValidate: true,
                     })

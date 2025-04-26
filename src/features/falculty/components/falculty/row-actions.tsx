@@ -3,16 +3,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import React, { useState } from 'react'
+import React from 'react'
 import { Button } from '@/components/ui/button'
-import { PencilLine, Trash2, View } from 'lucide-react'
+import { PencilLine, View } from 'lucide-react'
 import { FacultyResponseItem } from '@/features/falculty/types'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 const RowActions: React.FC<{ row: FacultyResponseItem }> = ({ row }) => {
-  const session = useSession()
-
   return (
     <div className="flex">
       <Tooltip>

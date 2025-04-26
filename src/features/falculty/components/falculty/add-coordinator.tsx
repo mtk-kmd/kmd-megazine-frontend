@@ -77,15 +77,15 @@ const AddCoordinator: React.FC<{
         last_name: values.last_name,
       },
       {
-        async onSuccess(data, variables, context) {
+        async onSuccess() {
           await queryClient.invalidateQueries({
             queryKey: ['users', 'role', 'marketing coordinator'],
           })
         },
-        onError(error, variables, context) {
+        onError(error) {
           toast.error(error.message)
         },
-        onSettled(data, error, variables, context) {
+        onSettled() {
           onDismiss(false)
         },
       }

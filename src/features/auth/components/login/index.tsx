@@ -44,7 +44,7 @@ const LoginForm = () => {
     setIsSubmitting(true)
 
     try {
-      const response: any = await signIn('credentials', {
+      const response = await signIn('credentials', {
         username: values.email,
         password: values.password,
         redirect: false,

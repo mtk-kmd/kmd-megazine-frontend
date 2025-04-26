@@ -10,16 +10,12 @@ import {
   DrawerDescription,
 } from '@/components/ui/drawer'
 
-import _ from 'lodash'
 import { z } from 'zod'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  addManagerSchema,
-  addStudentSchema,
-} from '@/features/users/utils/validator'
+import { addManagerSchema } from '@/features/users/utils/validator'
 
 import {
   Form,
@@ -77,7 +73,7 @@ const AddManager: React.FC<{
         last_name: values.last_name,
       },
       {
-        async onSuccess(data, variables, context) {
+        async onSuccess() {
           await queryClient.invalidateQueries({
             queryKey: ['users', 'role', 'manager'],
           })

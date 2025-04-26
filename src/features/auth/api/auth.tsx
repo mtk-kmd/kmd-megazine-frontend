@@ -25,7 +25,7 @@ const sendVerificationMail = async ({
 export const useSendVerificationMail = () => {
   return useMutation({
     mutationFn: (user_id: number) => sendVerificationMail({ user_id }),
-    onSuccess(data) {
+    onSuccess() {
       toast.success('An OTP code has been sent to your email address.', {
         position: 'top-right',
       })
@@ -59,7 +59,7 @@ export const useVerifyUser = () => {
   return useMutation({
     mutationFn: (payload: { email: string; auth_code: number }) =>
       verifyUser({ payload }),
-    onSuccess(data) {
+    onSuccess() {
       toast.success(
         'Account has been verified successfully. Please login again.',
         {

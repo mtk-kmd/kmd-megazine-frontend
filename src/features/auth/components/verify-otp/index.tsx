@@ -55,7 +55,7 @@ const VerifyOtp = () => {
         auth_code: parseInt(values.auth_code),
       },
       {
-        onSuccess(data, variables, context) {
+        onSuccess() {
           router.push('/login')
         },
       }
@@ -65,7 +65,7 @@ const VerifyOtp = () => {
   const handleResendOtp = () => {
     if (userId) {
       sendVerificationMail(parseInt(userId), {
-        onSuccess(data, variables, context) {
+        onSuccess() {
           form.setValue('auth_code', '')
         },
       })

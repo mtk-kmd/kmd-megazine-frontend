@@ -11,7 +11,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -57,13 +56,13 @@ const AddFaculty: React.FC<{
 
   const onSubmit = (values: z.infer<typeof createFacultySchema>) => {
     createFacultyMutate(values, {
-      async onSuccess(data, variables, context) {
+      async onSuccess() {
         await queryClient.invalidateQueries({ queryKey: ['faculties'] })
       },
-      onError(error, variables, context) {
+      onError(error) {
         toast.error(error.message)
       },
-      onSettled(data, error, variables, context) {
+      onSettled() {
         onDismiss(false)
       },
     })

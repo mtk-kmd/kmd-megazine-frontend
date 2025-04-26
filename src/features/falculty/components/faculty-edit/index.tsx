@@ -1,10 +1,9 @@
 'use client'
-import _ from 'lodash'
 import { z } from 'zod'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
-import { useEditUser, useUpdateFaculty } from '@/features/users/api/users'
+import { useUpdateFaculty } from '@/features/users/api/users'
 import {
   Form,
   FormControl,
@@ -37,9 +36,6 @@ const EditFaculty = () => {
 
   const { mutate: updateFacultyMutate, isPending: isUpdateFacultyMutating } =
     useUpdateFaculty(accessToken)
-
-  const { isPending: isUserEditMutating, mutate: userEditMutate } =
-    useEditUser(accessToken)
 
   const form = useForm<z.infer<typeof editFacultySchema>>({
     resolver: zodResolver(editFacultySchema),
@@ -84,7 +80,7 @@ const EditFaculty = () => {
         coordinator_id: Number(values.coordinator_id),
       },
       {
-        async onSuccess(data, variables, context) {
+        async onSuccess() {
           await queryClient.invalidateQueries({
             queryKey: ['faculty', Number(params.facultyId)],
           })
@@ -138,7 +134,7 @@ const EditFaculty = () => {
                       <FormLabel>Faculty Name</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={isUserEditMutating}
+                          disabled={isUpdateFacultyMutating}
                           placeholder="Enter name"
                           {...field}
                         />
