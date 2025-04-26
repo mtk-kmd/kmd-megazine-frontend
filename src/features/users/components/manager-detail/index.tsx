@@ -92,6 +92,7 @@ const ManagerDetail = () => {
           <div className="mt-3 flex gap-2 sm:ml-4 sm:mt-0">
             <Button
               variant="destructive"
+              className="gap-2"
               onClick={() => handleDeleteOpen(true)}
             >
               <Trash2 className="size-3.5" />

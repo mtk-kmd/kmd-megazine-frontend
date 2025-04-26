@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { useGetUser } from '@/features/users/api/users'
+import { useDeleteUser, useGetUser } from '@/features/users/api/users'
 import {
   Calendar,
   Download,
@@ -35,13 +35,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useQueryClient } from '@tanstack/react-query'
 
 const StudentDetail = () => {
   const session = useSession()
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
   const params = useParams<{ studentId: string }>()
+
+  const { mutate: deleteUserMutate, isPending: isDeleteUserMutating } =
+    useDeleteUser(accessToken)
 
   const { isSuccess, error, data, isLoading } = useGetUser(
     accessToken,
@@ -50,10 +56,24 @@ const StudentDetail = () => {
   )
 
   const handleDeleteOpen = (open: boolean) => {
-    setIsDeleteOpen(open)
+    if (!isDeleteUserMutating) {
+      setIsDeleteOpen(open)
+    }
   }
 
-  const handleDeleteUser = async () => {}
+  const handleDeleteUser = async () => {
+    deleteUserMutate(Number(params.studentId), {
+      async onSuccess() {
+        await queryClient.invalidateQueries({
+          queryKey: ['users', 'role', 'student'],
+        })
+        router.push('/students')
+      },
+      onSettled() {
+        handleDeleteOpen(false)
+      },
+    })
+  }
 
   if (isLoading) {
     return <span>Loading...</span>
@@ -86,6 +106,7 @@ const StudentDetail = () => {
           <div className="mt-3 flex gap-2 sm:ml-4 sm:mt-0">
             <Button
               variant="destructive"
+              className="gap-2"
               onClick={() => handleDeleteOpen(true)}
             >
               <Trash2 className="size-3.5" />
@@ -102,8 +123,15 @@ const StudentDetail = () => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <Button onClick={handleDeleteUser}>Delete</Button>
+                  <AlertDialogCancel disabled={isDeleteUserMutating}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <Button
+                    loading={isDeleteUserMutating}
+                    onClick={handleDeleteUser}
+                  >
+                    Delete
+                  </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
