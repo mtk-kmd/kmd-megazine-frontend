@@ -173,7 +173,8 @@ const EditFaculty = () => {
                         >
                           <Button
                             variant="secondary"
-                            className="rounded-full border border-input"
+                            size="sm"
+                            className="rounded-full border border-input px-4"
                           >
                             View
                           </Button>
