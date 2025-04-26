@@ -64,8 +64,6 @@ const handler = NextAuth({
           if (axios.isAxiosError(error) && error.response) {
             const errorResponse = error.response.data as any
 
-            console.log(errorResponse)
-
             if (
               errorResponse.message === 'User is not verified' &&
               errorResponse.user_id
