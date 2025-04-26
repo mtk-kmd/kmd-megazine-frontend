@@ -20,16 +20,21 @@ import {
 import { Eye, EyeClosed } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Session } from 'next-auth'
+import { useSendVerificationMail } from '@/features/auth/api/auth'
 
 const Login = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { mutate: sendVerificationMail, isPending: isSendingVerificationMail } =
+    useSendVerificationMail()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   })
@@ -40,7 +45,7 @@ const Login = () => {
 
     try {
       const response: any = await signIn('credentials', {
-        username: values.username,
+        username: values.email,
         password: values.password,
         redirect: false,
       })
@@ -48,10 +53,23 @@ const Login = () => {
       if (!response.ok) {
         toast.error(response.error, { position: 'top-right' })
       } else {
-        toast.success('You’ve successfully logged in.', {
-          position: 'top-right',
-        })
-        return router.push(redirectFrom)
+        const res = await fetch('/api/auth/session')
+        const session: Session = await res.json()
+
+        if (session.is_authenticated) {
+          toast.success('You’ve successfully logged in.', {
+            position: 'top-right',
+          })
+          return router.push(redirectFrom)
+        } else {
+          sendVerificationMail(session.user.data.user_id, {
+            onSuccess: () => {
+              router.push(
+                `/verify-otp?user_id=${session.user.data.user_id}&email=${values.email}`
+              )
+            },
+          })
+        }
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -76,19 +94,23 @@ const Login = () => {
         <h1 className="mb-2 text-2xl font-semibold">
           👋 Welcome to Campus Chronicles!
         </h1>
-        <p className="text-muted-foreground">Let's log you in.</p>
+        <p className="text-muted-foreground">Let&apos;s log you in.</p>
       </div>
 
       <Form {...loginForm}>
         <form className="space-y-6" onSubmit={loginForm.handleSubmit(onSubmit)}>
           <FormField
             control={loginForm.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter username" {...field} />
+                  <Input
+                    placeholder="example@gmail.com"
+                    disabled={isSendingVerificationMail || isSubmitting}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,6 +136,7 @@ const Login = () => {
                       placeholder="6+ characters"
                       className="pr-6"
                       {...field}
+                      disabled={isSendingVerificationMail || isSubmitting}
                       type={isPasswordVisible ? 'text' : 'password'}
                     />
                     <div className="absolute inset-y-0 right-0 flex h-full items-center justify-center p-1">
@@ -142,7 +165,7 @@ const Login = () => {
             size="lg"
             type="submit"
             className="w-full"
-            loading={isSubmitting}
+            loading={isSubmitting || isSendingVerificationMail}
           >
             Login
           </Button>

@@ -24,9 +24,6 @@ interface LoginApiResponse {
   }
 }
 
-interface ErrorResponse {
-  detail: string
-}
 
 const handler = NextAuth({
   providers: [
@@ -47,7 +44,7 @@ const handler = NextAuth({
           const response = await axios.post<LoginApiResponse>(
             `${process.env.NEXT_PUBLIC_API_URL}/login`,
             {
-              user_name: credentials.username,
+              email: credentials.username,
               password: credentials.password,
             },
             {
@@ -62,13 +59,39 @@ const handler = NextAuth({
           return {
             token: data.token,
             data: data.result,
+            is_authenticated: true,
           }
         } catch (error) {
           if (axios.isAxiosError(error) && error.response) {
-            const errorData = error.response.data as ErrorResponse
-            throw new Error(errorData.detail || 'Authentication failed')
+            const errorResponse = error.response.data as any
+
+            console.log(errorResponse);
+
+            if (
+              errorResponse.message === 'User is not verified' &&
+              errorResponse.user_id
+            ) {
+              return {
+                token: '',
+                data: {
+                  user_id: errorResponse.user_id,
+                  user_name: '',
+                  first_name: '',
+                  last_name: '',
+                  email: '',
+                  phone: null,
+                  auth: null,
+                  role_id: 0,
+                  auth_id: 0,
+                  status: false,
+                  createdAt: '',
+                  updatedAt: '',
+                },
+                is_authenticated: false,
+              }
+            }
+            throw new Error(errorResponse.message || errorResponse.detail || 'Authentication failed')
           } else {
-            console.error('Authentication error:', error)
             throw new Error('An unexpected error occurred')
           }
         }
@@ -77,15 +100,17 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.user = user
+        token.is_authenticated = user.is_authenticated
       }
 
       return token
     },
     async session({ session, token }) {
       session.user = token.user
+      session.is_authenticated = token.is_authenticated
       return session
     },
   },

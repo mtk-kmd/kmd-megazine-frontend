@@ -29,8 +29,12 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  const pathStartsWith = (prefixes: string[]) =>
-    prefixes.some((prefix) => pathname.startsWith(prefix))
+  // Check if the path exactly matches or starts with any of the prefixes
+  const isPublicRoute = publicRoutes.includes(pathname) || 
+    publicRoutes.some(route => pathname.startsWith(`${route}/`))
+  
+  const isProtectedRoute = protectedRoutes.includes(pathname) || 
+    protectedRoutes.some(route => pathname.startsWith(`${route}/`))
 
   // Helper function to handle redirection
   const redirectTo = (path: string, redirectFrom?: string) => {
@@ -45,13 +49,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(absoluteURL.toString())
   }
 
-  if (session) {
-    if (publicRoutes.includes(pathname)) {
+
+  if (session && session.is_authenticated) {
+    // Authenticated users shouldn't access public routes
+    if (isPublicRoute) {
       return redirectTo('/')
     }
     return NextResponse.next()
   } else {
-    if (pathStartsWith(protectedRoutes)) {
+    // Unauthenticated users can't access protected routes
+    if (isProtectedRoute) {
       return redirectTo('/login', pathname)
     }
     return NextResponse.next()
