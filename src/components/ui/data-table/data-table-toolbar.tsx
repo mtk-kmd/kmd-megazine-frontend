@@ -6,8 +6,6 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './data-table-view-options'
-
-import { DataTableFacetedFilter } from './data-table-faceted-filter'
 import { useEffect, useState } from 'react'
 import DataTableFacultyFilter from './data-table-faculty-filter'
 
@@ -42,7 +40,7 @@ function DebouncedInput({
     }, debounce)
 
     return () => clearTimeout(timeout)
-  }, [value])
+  }, [value, debounce, onChange])
 
   return (
     <Input

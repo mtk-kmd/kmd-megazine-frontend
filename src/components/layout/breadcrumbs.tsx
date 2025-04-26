@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs'
-import { Slash } from 'lucide-react'
 import { Fragment } from 'react'
 
 export function Breadcrumbs() {

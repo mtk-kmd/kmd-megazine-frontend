@@ -142,7 +142,7 @@ const EditStudent = () => {
                 <CommandItem
                   key={faculty.faculty_id}
                   value={faculty.name}
-                  onSelect={(value) => {
+                  onSelect={() => {
                     form.setValue('faculty_id', faculty.faculty_id.toString(), {
                       shouldValidate: true,
                     })

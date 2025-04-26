@@ -9,7 +9,6 @@ import {
   HomeIcon,
   LayoutGrid,
   PartyPopper,
-  Settings2,
   Users,
 } from 'lucide-react'
 

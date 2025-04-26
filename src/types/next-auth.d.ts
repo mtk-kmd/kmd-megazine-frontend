@@ -10,7 +10,7 @@ export type AuthPayload = {
     email: string
     phone: string | null
     role_id: number
-    auth_id: num | null
+    auth_id: number | null
     status: boolean
     createdAt: string
     updatedAt: string
@@ -23,7 +23,6 @@ declare module 'next-auth' {
     is_authenticated: boolean
     user: AuthPayload
   }
-  interface User extends AuthPayload {}
 }
 
 declare module 'next-auth/jwt' {

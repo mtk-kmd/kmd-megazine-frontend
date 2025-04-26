@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button'
 import { Session } from 'next-auth'
 import { useSendVerificationMail } from '@/features/auth/api/auth'
 
-const Login = () => {
+const LoginForm = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { mutate: sendVerificationMail, isPending: isSendingVerificationMail } =
@@ -49,6 +49,11 @@ const Login = () => {
         password: values.password,
         redirect: false,
       })
+
+      if (!response) {
+        toast.error('Authentication failed', { position: 'top-right' })
+        return
+      }
 
       if (!response.ok) {
         toast.error(response.error, { position: 'top-right' })
@@ -184,6 +189,14 @@ const Login = () => {
         </form>
       </Form>
     </>
+  )
+}
+
+const Login = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
 

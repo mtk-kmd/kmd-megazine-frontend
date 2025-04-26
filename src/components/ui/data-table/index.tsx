@@ -37,19 +37,19 @@ interface DataTableProps<TData, TValue> {
   searchLabel?: string
 }
 
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value)
-  addMeta({
-    itemRank,
-  })
-  return itemRank.passed
-}
-
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchLabel,
 }: DataTableProps<TData, TValue>) {
+  const fuzzyFilter: FilterFn<TData> = (row, columnId, value, addMeta) => {
+    const itemRank = rankItem(row.getValue(columnId), value)
+    addMeta({
+      itemRank,
+    })
+    return itemRank.passed
+  }
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})

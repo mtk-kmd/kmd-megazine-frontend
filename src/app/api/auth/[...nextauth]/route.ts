@@ -24,7 +24,6 @@ interface LoginApiResponse {
   }
 }
 
-
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -35,7 +34,7 @@ const handler = NextAuth({
       },
 
       // @ts-ignore
-      async authorize(credentials, req): Promise<AuthPayload> {
+      async authorize(credentials): Promise<AuthPayload> {
         if (!credentials || !credentials.username || !credentials.password) {
           throw new Error('Missing username or password')
         }
@@ -65,7 +64,7 @@ const handler = NextAuth({
           if (axios.isAxiosError(error) && error.response) {
             const errorResponse = error.response.data as any
 
-            console.log(errorResponse);
+            console.log(errorResponse)
 
             if (
               errorResponse.message === 'User is not verified' &&
@@ -90,7 +89,11 @@ const handler = NextAuth({
                 is_authenticated: false,
               }
             }
-            throw new Error(errorResponse.message || errorResponse.detail || 'Authentication failed')
+            throw new Error(
+              errorResponse.message ||
+                errorResponse.detail ||
+                'Authentication failed'
+            )
           } else {
             throw new Error('An unexpected error occurred')
           }

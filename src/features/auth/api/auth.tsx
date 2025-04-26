@@ -61,7 +61,7 @@ export const useVerifyUser = () => {
       verifyUser({ payload }),
     onSuccess(data) {
       toast.success(
-        'Your account has been verified successfully. Please login again.',
+        'Account has been verified successfully. Please login again.',
         {
           position: 'top-right',
         }
