@@ -205,7 +205,7 @@ const AddFaculty: React.FC<{
             className="flex-1 overflow-y-auto"
             onSubmit={addFacultyForm.handleSubmit(onSubmit)}
           >
-            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-3 p-4 pt-0 md:grid-cols-2">
+            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-5 p-4 pt-0 md:grid-cols-2">
               <FormField
                 name="name"
                 control={addFacultyForm.control}
