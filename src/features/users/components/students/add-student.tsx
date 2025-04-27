@@ -203,7 +203,7 @@ const AddStudent: React.FC<{
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex-1 overflow-y-auto"
           >
-            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-3 p-4 pt-0 md:grid-cols-2">
+            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-5 p-4 pt-0 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="username"

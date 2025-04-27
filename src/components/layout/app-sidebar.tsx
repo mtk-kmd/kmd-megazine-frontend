@@ -8,6 +8,7 @@ import {
   GalleryVerticalEnd,
   HomeIcon,
   LayoutGrid,
+  Newspaper,
   PartyPopper,
   Users,
 } from 'lucide-react'
@@ -55,12 +56,6 @@ const data = {
       items: [],
     },
     {
-      title: 'Contributions',
-      url: '/contributions',
-      icon: BookOpenIcon,
-      items: [],
-    },
-    {
       title: 'User Management',
       url: '#',
       icon: Users,
@@ -85,9 +80,9 @@ const data = {
       ],
     },
     {
-      title: 'Events',
-      url: '/events',
-      icon: PartyPopper,
+      title: 'Manage Magazines',
+      url: '/magazines',
+      icon: Newspaper,
       items: [],
     },
     {
