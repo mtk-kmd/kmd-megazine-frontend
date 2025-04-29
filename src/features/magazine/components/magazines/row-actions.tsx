@@ -1,5 +1,5 @@
 import { MoreVertical, PencilLine, Trash2, Upload, View } from 'lucide-react'
-import { Magazine } from '@/features/megazine/types'
+import { Magazine } from '@/features/magazine/types'
 import {
   Tooltip,
   TooltipContent,

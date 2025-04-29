@@ -16,6 +16,9 @@ const badgeVariants = cva(
           'rounded-full border-transparent bg-green-100 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20',
         destructive:
           'rounded-full border-transparent bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20',
+        warning:
+          'rounded-full border-transparent bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20',
+        info: 'rounded-full border-transparent bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20',
         outline: 'text-foreground',
       },
     },

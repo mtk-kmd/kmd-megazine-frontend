@@ -1,4 +1,4 @@
-import EditMagazine from '@/features/megazine/components/edit-megazine'
+import EditMagazine from '@/features/magazine/components/edit-magazine'
 
 export default function EditMagazinePage() {
   return <EditMagazine />

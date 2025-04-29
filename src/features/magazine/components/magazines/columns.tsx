@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import RowActions from './row-actions'
 import { Badge } from '@/components/ui/badge'
 import { ColumnDef } from '@tanstack/react-table'
-import { Magazine } from '@/features/megazine/types'
+import { Magazine } from '@/features/magazine/types'
 
 export const columns: ColumnDef<Magazine>[] = [
   {
