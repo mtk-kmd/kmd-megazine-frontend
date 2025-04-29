@@ -1,8 +1,8 @@
 import React from 'react'
-import Megazines from '@/features/megazine/components/megazines'
+import Magazines from '@/features/magazine/components/magazines'
 
-const MegazinesPage = () => {
-  return <Megazines />
+const MagazinesPage = () => {
+  return <Magazines />
 }
 
-export default MegazinesPage
+export default MagazinesPage

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { AddMagazine } from './add-megazine'
+import { AddMagazine } from './add-magazine'
 import { Button } from '@/components/ui/button'
 
 export function Header() {

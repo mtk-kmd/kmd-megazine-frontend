@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils'
 import {
   addMagazineSchema,
   AddMagazineFormValues,
-} from '@/features/megazine/utils/validator'
+} from '@/features/magazine/utils/validator'
 
 const initialFormValues: AddMagazineFormValues = {
   title: '',

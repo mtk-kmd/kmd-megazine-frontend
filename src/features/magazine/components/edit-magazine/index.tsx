@@ -27,7 +27,7 @@ import { Textarea } from '@/components/ui/textarea'
 import {
   EditMagazineFormValues,
   editMagazineSchema,
-} from '@/features/megazine/utils/validator'
+} from '@/features/magazine/utils/validator'
 
 export default function EditMagazine() {
   const router = useRouter()
