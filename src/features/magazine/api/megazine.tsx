@@ -1,0 +1,104 @@
+import axios from 'axios'
+import { toast } from 'sonner'
+import { apiClient } from '@/lib/api-client'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { AddMagazineFormValues } from '../utils/validator'
+import { EventItemResponse, EventResponse } from '../types'
+
+const createMagazine = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: AddMagazineFormValues
+}): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.post<{ message: string }>(
+      '/createEvent',
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to create a new magazine.')
+  }
+}
+
+export const useCreateMagazine = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: AddMagazineFormValues) =>
+      createMagazine({ token, payload }),
+    onSuccess: () => {
+      toast.success('Your new magazine has been created successfully.')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+}
+
+const getMagazines = async (token: string): Promise<EventResponse> => {
+  try {
+    const response = await apiClient.get<EventResponse>('/getEvent', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to fetch magazines.')
+  }
+}
+
+export const useGetMagazines = (token: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ['magazines'],
+    queryFn: () => getMagazines(token),
+    enabled: enabled,
+  })
+}
+
+const getMagazine = async (
+  token: string,
+  magazine_id: number
+): Promise<EventItemResponse> => {
+  try {
+    const response = await apiClient.get<EventItemResponse>(
+      `/getEvent?event_id=${magazine_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to fetch magazine.')
+  }
+}
+
+export const useGetMagazine = (
+  token: string,
+  magazine_id: number,
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ['magazine', magazine_id],
+    queryFn: () => getMagazine(token, magazine_id),
+    enabled: enabled,
+    refetchOnWindowFocus: false,
+  })
+}

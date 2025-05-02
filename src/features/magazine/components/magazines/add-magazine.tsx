@@ -1,14 +1,14 @@
 'use client'
-
+import dayjs from 'dayjs'
 import { Button } from '@/components/ui/button'
 import {
   Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
 } from '@/components/ui/drawer'
 import {
   Form,
@@ -22,7 +22,6 @@ import {
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { CalendarIcon } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import { Calendar } from '@/components/ui/calendar'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -36,12 +35,17 @@ import {
   addMagazineSchema,
   AddMagazineFormValues,
 } from '@/features/magazine/utils/validator'
+import { useSession } from 'next-auth/react'
+import { Textarea } from '@/components/ui/textarea'
+import { useQueryClient } from '@tanstack/react-query'
+import { useCreateMagazine } from '../../api/megazine'
 
 const initialFormValues: AddMagazineFormValues = {
   title: '',
-  openDate: new Date(),
-  closeDate: new Date(),
-  finalClosureDate: new Date(),
+  createdBy: 0,
+  description: '',
+  entry_closure: dayjs().add(1, 'day').toDate(),
+  final_closure: dayjs().add(2, 'days').toDate(),
 }
 
 interface AddMagazineProps {
@@ -50,18 +54,33 @@ interface AddMagazineProps {
 }
 
 export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
+  const session = useSession()
+  const queryClient = useQueryClient()
+  const accessToken = session.data?.user.token as string
+  const userId = session.data?.user.data.user_id as number
+
+  const { mutate, isPending } = useCreateMagazine(accessToken)
   const form = useForm<AddMagazineFormValues>({
     resolver: zodResolver(addMagazineSchema),
-    defaultValues: initialFormValues,
+    defaultValues: { ...initialFormValues, createdBy: userId },
   })
 
+  const onDismiss = (open: boolean) => {
+    onOpenChange(open)
+    form.reset({ ...initialFormValues, createdBy: userId })
+  }
+
   const onSubmit = async (values: AddMagazineFormValues) => {
-    onOpenChange(false)
-    form.reset()
+    mutate(values, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['magazines'] })
+        onDismiss(false)
+      },
+    })
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={onDismiss}>
       <DrawerContent className="flex h-full max-h-[calc(100dvh-0.75rem)] flex-col">
         <DrawerHeader className="mx-auto w-full max-w-md">
           <DrawerTitle>Add New Magazine</DrawerTitle>
@@ -83,7 +102,12 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter magazine title" {...field} />
+                      <Textarea
+                        className="resize-none"
+                        placeholder="Enter magazine title"
+                        {...field}
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,10 +116,29 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
 
               <FormField
                 control={form.control}
-                name="openDate"
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="resize-none"
+                        placeholder="Enter magazine description"
+                        {...field}
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="entry_closure"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Open Date</FormLabel>
+                    <FormLabel>Entry Closure Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -105,6 +148,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                               'w-full pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
+                            disabled={isPending}
                           >
                             {field.value ? (
                               format(field.value, 'PPP')
@@ -119,8 +163,12 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date()}
+                          onSelect={(date) => {
+                            if (date) {
+                              field.onChange(date)
+                            }
+                          }}
+                          disabled={(date) => date < new Date() || isPending}
                           initialFocus
                         />
                       </PopoverContent>
@@ -132,49 +180,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
 
               <FormField
                 control={form.control}
-                name="closeDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Close Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date <= form.getValues('openDate')
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="finalClosureDate"
+                name="final_closure"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Final Closure Date</FormLabel>
@@ -187,6 +193,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                               'w-full pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
+                            disabled={isPending}
                           >
                             {field.value ? (
                               format(field.value, 'PPP')
@@ -201,9 +208,15 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(date) => {
+                            if (date) {
+                              field.onChange(date)
+                            }
+                          }}
                           disabled={(date) =>
-                            date < form.getValues('closeDate')
+                            date < new Date() ||
+                            date <= form.getValues('entry_closure') ||
+                            isPending
                           }
                           initialFocus
                         />
@@ -217,12 +230,21 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
           </form>
         </Form>
         <DrawerFooter className="mx-auto flex w-full max-w-md flex-col gap-3 lg:flex-row">
-          <DrawerClose asChild>
-            <Button className="lg:flex-1" variant="outline">
+          <DrawerClose disabled={isPending} asChild>
+            <Button
+              className="lg:flex-1"
+              variant="outline"
+              disabled={isPending}
+            >
               Cancel
             </Button>
           </DrawerClose>
-          <Button type="submit" className="lg:flex-1" form="add-magazine-form">
+          <Button
+            loading={isPending}
+            type="submit"
+            className="lg:flex-1"
+            form="add-magazine-form"
+          >
             Submit
           </Button>
         </DrawerFooter>

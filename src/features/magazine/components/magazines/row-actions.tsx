@@ -1,5 +1,5 @@
 import { MoreVertical, PencilLine, Trash2, Upload, View } from 'lucide-react'
-import { Magazine } from '@/features/magazine/types'
+import { Event } from '@/features/magazine/types'
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog'
 
 interface RowActionsProps {
-  row: Magazine
+  row: Event
 }
 
 const RowActions = ({ row }: RowActionsProps) => {
@@ -45,12 +45,12 @@ const RowActions = ({ row }: RowActionsProps) => {
   }
 
   const confirmDelete = () => {
-    console.log('Delete magazine:', row.id)
+    console.log('Delete magazine:', row.event_id)
     setIsDeleteOpen(false)
   }
 
   const confirmPublish = () => {
-    console.log('Publish magazine:', row.id)
+    console.log('Publish magazine:', row.event_id)
     setIsPublishOpen(false)
   }
 
@@ -58,18 +58,18 @@ const RowActions = ({ row }: RowActionsProps) => {
     <div className="flex items-center gap-2">
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link href={`/magazines/${row.id}`}>
+          <Link href={`/magazines/${row.event_id}`}>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <View strokeWidth={1.2} className="font size-5 text-green-600" />
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent className="rounded-lg px-3 py-2 font-bold">
+        <TooltipContent className="rounded-lg px-4 py-3 text-sm font-bold">
           View
         </TooltipContent>
       </Tooltip>
 
-      {!row.published && (
+      {row.status !== 'FINALIZED' && (
         <>
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
@@ -79,17 +79,17 @@ const RowActions = ({ row }: RowActionsProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="rounded-xl" align="end">
               <DropdownMenuItem
-                className="rounded-lg px-3 py-2 font-semibold"
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold"
                 onClick={handlePublish}
               >
                 <Upload strokeWidth={1.2} className="mr-2 size-5" />
                 <span>Publish</span>
               </DropdownMenuItem>
               <Link
-                href={`/magazines/${row.id}/edit`}
+                href={`/magazines/${row.event_id}/edit`}
                 onClick={() => setIsDropdownOpen(false)}
               >
-                <DropdownMenuItem className="rounded-lg px-3 py-2 font-semibold">
+                <DropdownMenuItem className="rounded-lg px-4 py-2.5 text-sm font-semibold">
                   <PencilLine strokeWidth={1.2} className="mr-2 size-5" />
                   <span>Edit</span>
                 </DropdownMenuItem>
@@ -97,7 +97,7 @@ const RowActions = ({ row }: RowActionsProps) => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleDelete}
-                className="rounded-lg px-3 py-2 font-semibold text-destructive focus:text-destructive"
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold text-destructive focus:text-destructive"
               >
                 <Trash2 strokeWidth={1.2} className="mr-2 size-5" />
                 <span>Delete</span>

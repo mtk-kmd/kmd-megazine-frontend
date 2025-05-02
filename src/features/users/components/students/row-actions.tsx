@@ -60,7 +60,7 @@ const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
+        <TooltipContent className="rounded-lg px-4 py-2.5 text-sm font-semibold">
           View
         </TooltipContent>
       </Tooltip>
@@ -73,7 +73,7 @@ const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
             </Button>
           </Link>
         </TooltipTrigger>
-        <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
+        <TooltipContent className="rounded-lg px-4 py-2.5 text-sm font-semibold">
           Edit
         </TooltipContent>
       </Tooltip>
@@ -88,7 +88,7 @@ const RowActions: React.FC<{ row: UserWithOptionalFaculty }> = ({ row }) => {
             <Trash2 strokeWidth={1.2} className="size-5 text-red-600" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent className="rounded-lg px-3 py-2 font-semibold">
+        <TooltipContent className="rounded-lg px-4 py-2.5 text-sm font-semibold">
           Delete
         </TooltipContent>
       </Tooltip>

@@ -78,10 +78,10 @@ export function DataTableToolbar<TData>({
           <Button
             variant="ghost"
             onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
+            className="h-9 gap-2 px-2 lg:px-3"
           >
             Reset
-            <X />
+            <X className="size-4" />
           </Button>
         )}
       </div>

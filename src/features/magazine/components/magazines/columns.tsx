@@ -2,49 +2,58 @@ import { format } from 'date-fns'
 import RowActions from './row-actions'
 import { Badge } from '@/components/ui/badge'
 import { ColumnDef } from '@tanstack/react-table'
-import { Magazine } from '@/features/magazine/types'
+import { Event } from '@/features/magazine/types'
 
-export const columns: ColumnDef<Magazine>[] = [
+export const columns: ColumnDef<Event>[] = [
+  {
+    accessorKey: 'event_id',
+    header: 'ID',
+  },
   {
     accessorKey: 'title',
     header: 'Title',
     filterFn: 'includesString',
   },
   {
-    accessorKey: 'openDate',
-    header: 'Open Date',
-    cell: ({ row }) => {
-      return format(new Date(row.getValue('openDate')), 'PPP')
-    },
-  },
-  {
-    accessorKey: 'closeDate',
-    header: 'Close Date',
-    cell: ({ row }) => {
-      return format(new Date(row.getValue('closeDate')), 'PPP')
-    },
-  },
-  {
-    accessorKey: 'finalCloseDate',
-    header: 'Final Close Date',
-    cell: ({ row }) => {
-      return format(new Date(row.getValue('finalCloseDate')), 'PPP')
-    },
-  },
-  {
-    accessorKey: 'published',
+    accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => (
+      <Badge
+        className="px-3 py-1.5"
+        variant={
+          row.getValue('status') === 'OPEN'
+            ? 'success'
+            : row.getValue('status') === 'CLOSED'
+              ? 'warning'
+              : 'info'
+        }
+      >
+        <span className="first-letter:uppercase">
+          {(row.getValue('status') as string).toLowerCase()}
+        </span>
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: 'closure.entry_closure',
+    header: 'Entry Closure',
     cell: ({ row }) => {
-      const published = row.getValue('published') as boolean
-      return (
-        <Badge
-          className="px-3 py-1.5"
-          variant={published ? 'success' : 'destructive'}
-        >
-          {published ? 'Published' : 'Draft'}
-        </Badge>
-      )
+      const closure = row.original.closure
+      return format(new Date(closure.entry_closure), 'PPP')
     },
+  },
+  {
+    accessorKey: 'closure.final_closure',
+    header: 'Final Closure',
+    cell: ({ row }) => {
+      const closure = row.original.closure
+      return format(new Date(closure.final_closure), 'PPP')
+    },
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    cell: ({ row }) => format(new Date(row.getValue('createdAt')), 'PPP'),
   },
   {
     id: 'actions',
