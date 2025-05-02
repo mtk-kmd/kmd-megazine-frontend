@@ -1,7 +1,6 @@
 'use client'
 import { z } from 'zod'
 import Link from 'next/link'
-import { toast } from 'sonner'
 import React, { useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -42,16 +41,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useAssignGuestToFaculty } from '../../api/auth'
+import { useRouter } from 'next/navigation'
 
 const Register = () => {
+  const router = useRouter()
   const [isFacultySelectOpen, setIsFacultySelectOpen] = useState(false)
   const { mutate: createUserMutate, isPending: isCreateUserMutating } =
     useCreateUser('')
 
   const {
-    mutate: assignStudentToFacultyMutate,
-    isPending: isAssignStudentToFacultyMutating,
-  } = useAssignStudentToFaculty('')
+    mutate: assignGuestToFacultyMutate,
+    isPending: isAssignGuestToFacultyMutating,
+  } = useAssignGuestToFaculty()
 
   const {
     error,
@@ -88,17 +90,14 @@ const Register = () => {
       },
       {
         onSuccess(data) {
-          assignStudentToFacultyMutate(
-            {
-              faculty_id: parseInt(values.faculty_id),
-              student_id: data.result.user.user_id,
-            },
-            {
-              async onSuccess() {
-                toast.success('Your account has been successfully registered.')
-              },
-            }
-          )
+          assignGuestToFacultyMutate({
+            faculty_id: parseInt(values.faculty_id),
+            guest_id: data.result.user.user_id,
+          })
+
+          setTimeout(() => {
+            router.push('/login')
+          }, 1500)
         },
       }
     )
@@ -185,7 +184,7 @@ const Register = () => {
                   <FormControl>
                     <Input
                       disabled={
-                        isCreateUserMutating || isAssignStudentToFacultyMutating
+                        isCreateUserMutating || isAssignGuestToFacultyMutating
                       }
                       placeholder="Enter first name"
                       {...field}
@@ -204,7 +203,7 @@ const Register = () => {
                   <FormControl>
                     <Input
                       disabled={
-                        isCreateUserMutating || isAssignStudentToFacultyMutating
+                        isCreateUserMutating || isAssignGuestToFacultyMutating
                       }
                       placeholder="Enter last name"
                       {...field}
@@ -222,7 +221,13 @@ const Register = () => {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter username" {...field} />
+                  <Input
+                    disabled={
+                      isCreateUserMutating || isAssignGuestToFacultyMutating
+                    }
+                    placeholder="Enter username"
+                    {...field}
+                  />
                 </FormControl>
                 <FormControl />
                 <FormMessage />
@@ -247,8 +252,7 @@ const Register = () => {
                         aria-expanded={isFacultySelectOpen}
                         className="w-full justify-between pr-2"
                         disabled={
-                          isCreateUserMutating ||
-                          isAssignStudentToFacultyMutating
+                          isCreateUserMutating || isAssignGuestToFacultyMutating
                         }
                       >
                         {(() => {
@@ -324,7 +328,12 @@ const Register = () => {
             )}
           />
 
-          <Button size="lg" type="submit" className="w-full">
+          <Button
+            size="lg"
+            type="submit"
+            className="w-full"
+            loading={isCreateUserMutating || isAssignGuestToFacultyMutating}
+          >
             Sign Up
           </Button>
 
