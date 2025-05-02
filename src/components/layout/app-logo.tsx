@@ -7,21 +7,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { GalleryVertical } from 'lucide-react'
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}) {
-  const [activeTeam] = React.useState(teams[0])
-
-  if (!activeTeam) {
-    return null
-  }
+export function AppLogo() {
+  const [activeTeam] = React.useState({
+    name: 'Campus Chronicles',
+    logo: GalleryVertical,
+    plan: 'Enterprise',
+  })
 
   return (
     <SidebarMenu>
