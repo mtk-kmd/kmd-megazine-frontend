@@ -14,7 +14,7 @@ const protectedRoutes = [
   '/',
   '/contributions',
   '/coordinators',
-  '/events',
+  '/magazines',
   '/faculties',
   '/guests',
   '/managers',
