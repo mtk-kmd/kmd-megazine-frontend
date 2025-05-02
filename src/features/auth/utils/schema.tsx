@@ -24,8 +24,11 @@ export const signupSchema = z.object({
   role: z.number().default(4),
   phone: z
     .string()
-    .min(1, 'Phone number is required')
-    .refine(isValidPhoneNumber, { message: 'Invalid phone number' }),
+    .optional()
+    .default('')
+    .refine((value) => value === '' || isValidPhoneNumber(value), {
+      message: 'Invalid phone number',
+    }),
   email: z
     .string({ required_error: 'Email address is required.' })
     .min(1, 'Email is required')

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Column } from '@tanstack/react-table'
-import { Check, PlusCircle } from 'lucide-react'
+import { AlertCircle, Check, Filter, ListFilter, Loader, PlusCircle } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -48,7 +48,7 @@ export function DataTableFacetedFilter<TData, TValue>({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-9 gap-2 border-dashed">
-          <PlusCircle className="size-4" />
+          <ListFilter className="size-4" />
           {title}
           {selectedValues?.size > 0 && (
             <>
@@ -85,14 +85,20 @@ export function DataTableFacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="start">
+      <PopoverContent className="w-72 p-0" align="start">
         {isLoading ? (
-          <span>Loading...</span>
+          <div className="flex items-center justify-center p-4">
+            <Loader className="h-6 w-6 animate-spin" />
+            <span className="ml-2">Loading...</span>
+          </div>
         ) : error ? (
-          <span>Error: {error.message}</span>
+          <div className="p-4 text-center text-destructive">
+            <AlertCircle className="mx-auto mb-2 h-6 w-6" />
+            <span>Error: {error.message}</span>
+          </div>
         ) : (
           <Command>
-            <CommandInput placeholder={title} />
+            <CommandInput placeholder={`Search ${title?.toLowerCase()}...`} />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
@@ -112,25 +118,26 @@ export function DataTableFacetedFilter<TData, TValue>({
                           filterValues.length ? filterValues : undefined
                         )
                       }}
+                      className="py-2"
                     >
                       <div
                         className={cn(
-                          'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                          'mr-2 flex size-5 items-center justify-center rounded-sm border border-primary',
                           isSelected
                             ? 'bg-primary text-primary-foreground'
                             : 'opacity-50 [&_svg]:invisible'
                         )}
                       >
-                        <Check />
+                        <Check className="size-2.5" />
                       </div>
                       {option.icon && (
                         <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                       )}
-                      <span>{option.label}</span>
+                      <span className="flex-grow">{option.label}</span>
                       {facets?.get(option.value) && (
-                        <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
+                        <Badge variant="secondary" className="ml-auto">
                           {facets.get(option.value)}
-                        </span>
+                        </Badge>
                       )}
                     </CommandItem>
                   )
@@ -142,7 +149,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandGroup>
                     <CommandItem
                       onSelect={() => column?.setFilterValue(undefined)}
-                      className="justify-center text-center"
+                      className="justify-center py-2 text-center text-destructive hover:text-destructive"
                     >
                       Clear filters
                     </CommandItem>

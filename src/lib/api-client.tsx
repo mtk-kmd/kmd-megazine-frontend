@@ -22,45 +22,54 @@ apiClient.interceptors.response.use(
   (error) => {
     const err = error as AxiosError<{
       name?: string
-      message?: string
+      message?:
+        | string
+        | { code: string; meta: any; clientVersion: string; name: string }
       detail?: string
       statusCode: number
     }>
 
-    // Extract the detail property from the error
-    const detail = err.response?.data?.detail
-
     let errorName = err.name
-
     let message: string
 
-    // Check the status code and set the error name if it's 500
     if (err.response?.status === 500) {
       errorName = 'Internal Server Error'
     }
 
-    // Check if detail is an array
+    const detail = err.response?.data?.detail
+    const responseMessage = err.response?.data?.message
+
     if (_.isArray(detail)) {
-      // If it is an array, map over each item to create a list of error messages
-        const messages = detail.map((item: { loc?: (string | number)[]; input?: string }) => {
-        const fieldValue = item.loc?.[1]
-        const field = typeof fieldValue === 'string' ? fieldValue.replace('_', ' ') : fieldValue
-        return `The ${field} - (${item.input}) is not valid.`
-      })
-      // Combine them into single message
+      const messages = detail.map(
+        (item: { loc?: (string | number)[]; input?: string }) => {
+          const fieldValue = item.loc?.[1]
+          const field =
+            typeof fieldValue === 'string'
+              ? fieldValue.replace('_', ' ')
+              : fieldValue
+          return `The ${field} - (${item.input}) is not valid.`
+        }
+      )
       message = messages.join(' ')
     } else if (_.isString(detail)) {
-      // If it a string, assign directly to message
       message = detail
+    } else if (_.isObject(responseMessage)) {
+      const { code, meta, name } = responseMessage as {
+        code: string
+        meta: any
+        name: string
+      }
+      if (code === 'P2002' && meta?.target?.[0]) {
+        const field = meta.target[0].replace(/_/g, ' ')
+        message = `The ${field} is already in use. Please use a different ${field}.`
+      } else {
+        message = `${name}: ${code}`
+      }
     } else {
-      // If detail is neither an array nor a string,
-      // fall back to other possible message sources
-      message = err.response?.data?.message || err.message
+      message = responseMessage || err.message || 'An unknown error occurred'
     }
 
-    const apiError = new ApiError(message)
-    apiError.name = errorName
-
-    return Promise.reject(new ApiError(message))
+    const apiError = new ApiError(message, errorName)
+    return Promise.reject(apiError)
   }
 )

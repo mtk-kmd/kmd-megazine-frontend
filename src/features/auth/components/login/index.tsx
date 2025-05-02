@@ -127,14 +127,7 @@ const LoginForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between">
-                  <FormLabel>Password</FormLabel>
-                  <Link href="/forgot-password">
-                    <Button variant="link" className="px-0">
-                      Forgot Password
-                    </Button>
-                  </Link>
-                </div>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -178,7 +171,7 @@ const LoginForm = () => {
           <p className="text-center text-muted-foreground">
             Want to access as a guest?{' '}
             <Link
-              href="/signup"
+              href="/register"
               className="font-medium text-primary hover:underline"
             >
               <Button type="button" variant="link" className="px-0">
