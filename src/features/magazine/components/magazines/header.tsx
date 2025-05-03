@@ -14,7 +14,7 @@ export function Header() {
   return (
     <>
       <div className="flex items-center justify-between space-y-2">
-        <div>
+        <div className="space-y-1">
           <h2 className="text-2xl font-bold tracking-tight">Magazines</h2>
           <p className="text-muted-foreground">
             Manage and monitor all magazines here

@@ -13,8 +13,8 @@ const Header = () => {
 
   return (
     <div className="sm:flex sm:items-center">
-      <div className="sm:flex-auto">
-        <h1 className="text-base font-semibold">Students</h1>
+      <div className="space-y-1 sm:flex-auto">
+        <h1 className="text-2xl font-bold tracking-tight">Students</h1>
         <p className="mt-2 text-sm">
           A list of all the students in your institute.
         </p>
