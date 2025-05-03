@@ -24,6 +24,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useSession } from 'next-auth/react'
+import { useDeleteMagazine } from '../../api/megazine'
 
 interface RowActionsProps {
   row: Event
@@ -31,27 +33,31 @@ interface RowActionsProps {
 
 const RowActions = ({ row }: RowActionsProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isPublishOpen, setIsPublishOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+
+  const session = useSession()
+  const accessToken = session?.data?.user.token as string
+
+  const { mutate: deleteMagazineMutate, isPending: isDeleteMagazineLoading } =
+    useDeleteMagazine(accessToken)
 
   const handleDelete = () => {
     setIsDropdownOpen(false)
     setIsDeleteOpen(true)
   }
 
-  const handlePublish = () => {
-    setIsDropdownOpen(false)
-    setIsPublishOpen(true)
+  const handleDeleteOpen = (open: boolean) => {
+    if (!isDeleteMagazineLoading) {
+      setIsDeleteOpen(open)
+    }
   }
 
   const confirmDelete = () => {
-    console.log('Delete magazine:', row.event_id)
-    setIsDeleteOpen(false)
-  }
-
-  const confirmPublish = () => {
-    console.log('Publish magazine:', row.event_id)
-    setIsPublishOpen(false)
+    deleteMagazineMutate(row.event_id, {
+      onSettled(data, error, variables, context) {
+        handleDeleteOpen(false)
+      },
+    })
   }
 
   return (
@@ -78,13 +84,6 @@ const RowActions = ({ row }: RowActionsProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="rounded-xl" align="end">
-              <DropdownMenuItem
-                className="rounded-lg px-4 py-2.5 text-sm font-semibold"
-                onClick={handlePublish}
-              >
-                <Upload strokeWidth={1.2} className="mr-2 size-5" />
-                <span>Publish</span>
-              </DropdownMenuItem>
               <Link
                 href={`/magazines/${row.event_id}/edit`}
                 onClick={() => setIsDropdownOpen(false)}
@@ -105,7 +104,7 @@ const RowActions = ({ row }: RowActionsProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <AlertDialog open={isDeleteOpen} onOpenChange={handleDeleteOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -115,26 +114,16 @@ const RowActions = ({ row }: RowActionsProps) => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <Button variant="destructive" onClick={confirmDelete}>
+                <AlertDialogCancel disabled={isDeleteMagazineLoading}>
+                  Cancel
+                </AlertDialogCancel>
+                <Button
+                  variant="destructive"
+                  onClick={confirmDelete}
+                  loading={isDeleteMagazineLoading}
+                >
                   Delete
                 </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <AlertDialog open={isPublishOpen} onOpenChange={setIsPublishOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Publish Magazine</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to publish this magazine? Once
-                  published, it will be visible to all users.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <Button onClick={confirmPublish}>Publish</Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

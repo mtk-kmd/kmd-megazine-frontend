@@ -144,3 +144,41 @@ export const useUpdateMagazine = (token: string) => {
     },
   })
 }
+
+const deleteMagazine = async ({
+  token,
+  event_id,
+}: {
+  token: string
+  event_id: number
+}): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.delete<{ message: string }>(
+      '/deleteEvent',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { event_id },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to delete the magazine.')
+  }
+}
+
+export const useDeleteMagazine = (token: string) => {
+  return useMutation({
+    mutationFn: (event_id: number) => deleteMagazine({ token, event_id }),
+    onSuccess: () => {
+      toast.success('The magazine has been deleted successfully.')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+}

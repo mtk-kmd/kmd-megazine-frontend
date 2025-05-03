@@ -59,6 +59,7 @@ apiClient.interceptors.response.use(
         meta: any
         name: string
       }
+
       if (code === 'P2002' && meta?.target?.[0]) {
         const field = meta.target[0].replace(/_/g, ' ')
         message = `The ${field} is already in use. Please use a different ${field}.`
