@@ -43,6 +43,7 @@
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.40.0",
     "embla-carousel-react": "^8.5.2",
+    "fflate": "^0.8.2",
     "heroicons": "^2.2.0",
     "input-otp": "^1.4.2",
     "lodash": "^4.17.21",

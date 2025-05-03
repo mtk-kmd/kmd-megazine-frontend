@@ -1,3 +1,4 @@
 import AddContribution from './add-contribution'
+import Contributions from './contributions'
 
-export { default as AddContribution } from './add-contribution'
+export { AddContribution, Contributions }

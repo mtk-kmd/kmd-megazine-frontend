@@ -1,7 +1,8 @@
 import React from 'react'
+import { Contributions } from '@/features/contribution/components'
 
 const ContributionsPage = () => {
-  return <div>ContributionsPage</div>
+  return <Contributions />
 }
 
 export default ContributionsPage

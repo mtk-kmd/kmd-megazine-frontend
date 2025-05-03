@@ -95,7 +95,7 @@ export function DataTable<TData, TValue>({
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
-      <div className="rounded-md border">
+      <div className="overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>({
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="p-4"
+                    className="p-4 text-secondary-foreground/75"
                   >
                     {header.isPlaceholder
                       ? null
@@ -125,7 +125,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3">
+                    <TableCell
+                      key={cell.id}
+                      className="px-4 py-3 text-secondary-foreground"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

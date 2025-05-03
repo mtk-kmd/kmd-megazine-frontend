@@ -49,7 +49,7 @@ export const useCreateMagazine = (token: string) => {
 
 const getMagazines = async (
   token: string,
-  is_new: boolean = false
+  role: string
 ): Promise<EventResponse> => {
   try {
     const response = await apiClient.get<EventResponse>('/getEvent', {
@@ -59,7 +59,7 @@ const getMagazines = async (
     })
 
     const magazines = response.data.result.filter((magazine) => {
-      if (is_new) {
+      if (role === 'student') {
         return (
           magazine.status === 'OPEN' &&
           new Date(magazine.closure.entry_closure) > new Date()
@@ -79,12 +79,12 @@ const getMagazines = async (
 
 export const useGetMagazines = (
   token: string,
-  is_new: boolean = false,
+  role: string,
   enabled: boolean
 ) => {
   return useQuery({
-    queryKey: ['magazines', is_new],
-    queryFn: () => getMagazines(token, is_new),
+    queryKey: ['magazines', role],
+    queryFn: () => getMagazines(token, role),
     enabled: enabled,
   })
 }
