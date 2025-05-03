@@ -21,6 +21,7 @@ export interface Event {
   closure: Closure;
 }
 
+
 export interface EventResponse {
   message: string;
   result: Event[];

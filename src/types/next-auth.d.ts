@@ -1,23 +1,11 @@
+import { UserWithOptionalFaculty } from '@/features/users/types'
 import { Organization } from '@/hooks/types'
 import NextAuth, { User, type DefaultSession } from 'next-auth'
 
 export type AuthPayload = {
   token: string
   is_authenticated: boolean
-  data: {
-    user_id: number
-    user_name: string
-    first_name: string
-    last_name: string
-    email: string
-    phone: string | null
-    role_id: number
-    auth_id: num | null
-    status: boolean
-    createdAt: string
-    updatedAt: string
-    auth: string | null
-  }
+  data: UserWithOptionalFaculty
 }
 
 declare module 'next-auth' {

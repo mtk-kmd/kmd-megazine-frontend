@@ -7,7 +7,9 @@ export type User = {
   last_name: string
   email: string
   phone: string | null
-  role: Role | null
+  role?: Role | null
+  role_id: null | number
+  auth: string | null,
   auth_id: number
   status: boolean
   createdAt: string

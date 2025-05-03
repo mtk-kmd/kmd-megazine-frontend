@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { AddContributionValues } from '../utils/validator'
 import axios from 'axios'
 import { apiClient } from '@/lib/api-client'
-import { CreatedContributionResponse } from '../types'
-import { toast } from 'sonner'
+import { CreatedContributionResponse, GetContributionsResponse } from '../types'
 
 const createContribution = async ({
   token,
@@ -59,5 +59,61 @@ export const useCreateContribution = (token: string) => {
     onError: () => {
       toast('Unable to create your contribution. Please try again.')
     },
+  })
+}
+
+const getContributions = async ({
+  token,
+  role,
+  user_id,
+  faculty_id,
+}: {
+  token: string
+  role: string
+  user_id?: number
+  faculty_id?: number
+}): Promise<GetContributionsResponse> => {
+  try {
+    const response = await apiClient.get<GetContributionsResponse>(
+      '/getStudentContribution',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    const contributions = response.data.result.filter((item) => {
+      if (role === 'student') {
+        return item.student_id === user_id
+      } else if (role === 'guest' || role === 'coordinator') {
+        return item.student.StudentFaculty?.faculty_id === faculty_id
+      }
+      return true
+    })
+
+    return {
+      message: response.data.message,
+      result: contributions,
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to fetch contributions.')
+  }
+}
+
+export const useGetContributions = (
+  token: string,
+  role: string,
+  user_id?: number,
+  faculty_id?: number,
+  enabled: boolean = false
+) => {
+  return useQuery({
+    queryKey: ['contributions', role, user_id, faculty_id],
+    queryFn: () => getContributions({ token, role, user_id, faculty_id }),
+    enabled,
   })
 }

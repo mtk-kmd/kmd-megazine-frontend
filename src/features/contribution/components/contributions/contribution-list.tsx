@@ -1,16 +1,21 @@
 import { useSession } from 'next-auth/react'
 import { columns } from './columns'
 
+import { ROLE_NAME } from '@/utils/constants'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetMagazines } from '../../api/megazine'
+import { useGetContributions } from '../../api/contribution'
 import { DataTable } from '@/components/ui/data-table'
 import { ErrorWidget } from '@/components/ui/error-widget'
-import { ROLE_NAME } from '@/utils/constants'
 
-export function MagazineList() {
+export function ContributionList() {
   const session = useSession()
   const accessToken = session?.data?.user.token as string
   const role_id = session?.data?.user.data.role_id as keyof typeof ROLE_NAME
+
+  const user_id = session?.data?.user.data.user_id as number
+  const faculty_id =
+    (session?.data?.user.data?.StudentFaculty?.faculty_id as number) ||
+    (session?.data?.user.data?.Faculty?.faculty_id as number)
 
   const role = ROLE_NAME[role_id]
 
@@ -19,7 +24,7 @@ export function MagazineList() {
     data: { result = [] } = {},
     error,
     isSuccess,
-  } = useGetMagazines(accessToken, role, !!accessToken)
+  } = useGetContributions(accessToken, role, user_id, faculty_id, !!accessToken)
 
   if (isLoading) {
     return (

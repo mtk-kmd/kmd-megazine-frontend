@@ -4,24 +4,12 @@ import NextAuth from 'next-auth/next'
 import { NextAuthOptions } from 'next-auth'
 import { AuthPayload } from '@/types/next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { UserWithOptionalFaculty } from '@/features/users/types'
 
 interface LoginApiResponse {
   message: string
   token: string
-  result: {
-    user_id: number
-    user_name: string
-    first_name: string
-    last_name: string
-    email: string
-    phone: string | null
-    role_id: number
-    auth_id: number | null
-    status: boolean
-    createdAt: string
-    updatedAt: string
-    auth: string | null
-  }
+  result: UserWithOptionalFaculty
 }
 
 const handler = NextAuth({
