@@ -1,5 +1,5 @@
 import React from 'react'
-import EditCoordinator from '@/features/users/components/edit-coordinator'
+import { EditCoordinator } from '@/features/users/components'
 
 const CoordinatorEditPage = () => {
   return <EditCoordinator />

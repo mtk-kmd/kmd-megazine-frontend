@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import React from 'react'
-import Register from '@/features/auth/components/register'
+import { Register } from '@/features/auth/components'
 
 export const metadata: Metadata = {
   title: 'Register',

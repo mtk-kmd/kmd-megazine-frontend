@@ -47,14 +47,28 @@ export const useCreateMagazine = (token: string) => {
   })
 }
 
-const getMagazines = async (token: string): Promise<EventResponse> => {
+const getMagazines = async (
+  token: string,
+  is_new: boolean = false
+): Promise<EventResponse> => {
   try {
     const response = await apiClient.get<EventResponse>('/getEvent', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.data
+
+    const magazines = response.data.result.filter((magazine) => {
+      if (is_new) {
+        return (
+          magazine.status === 'OPEN' &&
+          new Date(magazine.closure.entry_closure) > new Date()
+        )
+      }
+      return true
+    })
+
+    return { message: response.data.message, result: magazines }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.message)
@@ -63,10 +77,14 @@ const getMagazines = async (token: string): Promise<EventResponse> => {
   }
 }
 
-export const useGetMagazines = (token: string, enabled: boolean) => {
+export const useGetMagazines = (
+  token: string,
+  is_new: boolean = false,
+  enabled: boolean
+) => {
   return useQuery({
-    queryKey: ['magazines'],
-    queryFn: () => getMagazines(token),
+    queryKey: ['magazines', is_new],
+    queryFn: () => getMagazines(token, is_new),
     enabled: enabled,
   })
 }

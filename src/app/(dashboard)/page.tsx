@@ -1,6 +1,6 @@
 import React from 'react'
-import Dashboard from '@/features/dashboard/components/dashboard'
 import { Metadata } from 'next'
+import { Dashboard } from '@/features/dashboard/components'
 
 export const metadata: Metadata = {
   title: 'Dashboard',

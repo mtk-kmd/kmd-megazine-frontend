@@ -95,7 +95,7 @@ const studentNavItems = [
   },
   {
     title: 'New Magazines',
-    url: '/magazines/new',
+    url: '/magazines',
     icon: Newspaper,
     items: [],
   },

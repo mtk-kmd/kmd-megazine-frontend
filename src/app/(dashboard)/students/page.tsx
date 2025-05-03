@@ -1,6 +1,6 @@
 import React from 'react'
-import Students from '@/features/users/components/students'
 import { Metadata } from 'next'
+import { Students } from '@/features/users/components'
 
 export const metadata: Metadata = {
   title: 'Students',

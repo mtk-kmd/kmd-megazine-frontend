@@ -57,6 +57,7 @@ export const columns: ColumnDef<Event>[] = [
   },
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row }) => <RowActions row={row.original} />,
   },
 ]

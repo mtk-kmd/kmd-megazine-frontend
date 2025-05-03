@@ -136,9 +136,6 @@ const MagazineDetail = () => {
                       Edit
                     </Link>
                   </Button>
-                  <Button onClick={() => handlePublishOpen(true)} size="sm">
-                    Publish
-                  </Button>
                 </>
               )}
               {data.result.status === 'FINALIZED' && (
