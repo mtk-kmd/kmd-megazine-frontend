@@ -1,5 +1,5 @@
 import React from 'react'
-import EditManager from '@/features/users/components/edit-manager'
+import { EditManager } from '@/features/users/components'
 
 const ManagerEditPage = () => {
   return <EditManager />

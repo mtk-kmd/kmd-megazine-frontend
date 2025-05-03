@@ -1,5 +1,5 @@
 import React from 'react'
-import CoordinatorDetail from '@/features/users/components/coordinator-detail'
+import { CoordinatorDetail } from '@/features/users/components'
 
 const CoordinatorDetailPage = () => {
   return <CoordinatorDetail />

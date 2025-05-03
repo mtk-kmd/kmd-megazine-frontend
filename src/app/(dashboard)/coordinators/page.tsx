@@ -1,6 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import Coordinators from '@/features/users/components/coordinators'
+import { Coordinators } from '@/features/users/components'
 
 export const metadata: Metadata = {
   title: 'Coordinators',

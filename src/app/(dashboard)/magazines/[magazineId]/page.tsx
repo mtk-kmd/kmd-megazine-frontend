@@ -1,5 +1,5 @@
 import React from 'react'
-import MagazineDetail from '@/features/magazine/components/magazine-detail'
+import { MagazineDetail } from '@/features/magazine/components'
 
 const MegazineDetailPage = () => {
   return <MagazineDetail />

@@ -1,5 +1,5 @@
 import React from 'react'
-import ManagerDetail from '@/features/users/components/manager-detail'
+import { ManagerDetail } from '@/features/users/components'
 
 const ManagerDetailPage = () => {
   return <ManagerDetail />

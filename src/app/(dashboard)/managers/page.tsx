@@ -1,6 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import Managers from '@/features/users/components/managers'
+import { Managers } from '@/features/users/components'
 
 export const metadata: Metadata = {
   title: 'Managers',

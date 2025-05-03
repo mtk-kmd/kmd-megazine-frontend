@@ -5,17 +5,21 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useGetMagazines } from '../../api/megazine'
 import { DataTable } from '@/components/ui/data-table'
 import { ErrorWidget } from '@/components/ui/error-widget'
+import { ROLE_NAME } from '@/utils/constants'
 
 export function MagazineList() {
   const session = useSession()
   const accessToken = session?.data?.user.token as string
+  const role_id = session?.data?.user.data.role_id as keyof typeof ROLE_NAME
+
+  const role = ROLE_NAME[role_id]
 
   const {
     isLoading,
     data: { result = [] } = {},
     error,
     isSuccess,
-  } = useGetMagazines(accessToken, !!accessToken)
+  } = useGetMagazines(accessToken, role === 'student', !!accessToken)
 
   if (isLoading) {
     return (

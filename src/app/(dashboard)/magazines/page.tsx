@@ -1,5 +1,5 @@
 import React from 'react'
-import Magazines from '@/features/magazine/components/magazines'
+import { Magazines } from '@/features/magazine/components'
 
 const MagazinesPage = () => {
   return <Magazines />
