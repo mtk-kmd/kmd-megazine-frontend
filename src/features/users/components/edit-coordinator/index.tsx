@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEditUser, useGetUser } from '@/features/users/api/users'
 import {
   Form,
@@ -25,7 +25,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { Check, ChevronDown, Info } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
@@ -44,6 +44,7 @@ import {
 } from '@/features/users/types'
 
 const EditCoordinator = () => {
+  const router = useRouter()
   const session = useSession()
   const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
@@ -188,9 +189,17 @@ const EditCoordinator = () => {
 
   if (isSuccess) {
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10 pt-5">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-5">
-          <div className="sm:flex sm:items-center">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/coordinators')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <div className="mx-auto w-full max-w-2xl rounded-xl border bg-card p-4 shadow-sm sm:p-6 lg:p-8">
+          <div className="mb-6 sm:flex sm:items-center">
             <div className="sm:flex-auto">
               <h1 className="text-lg font-semibold">Edit Coordinator</h1>
               <p className="mt-2 text-sm">
@@ -202,6 +211,7 @@ const EditCoordinator = () => {
             <form
               id="edit-coordinator-form"
               onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
             >
               <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
@@ -212,6 +222,7 @@ const EditCoordinator = () => {
                       <FormLabel>Username</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter username"
                           {...field}
@@ -230,6 +241,7 @@ const EditCoordinator = () => {
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter first name"
                           {...field}
@@ -247,6 +259,7 @@ const EditCoordinator = () => {
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter last name"
                           {...field}
@@ -274,7 +287,7 @@ const EditCoordinator = () => {
                               role="combobox"
                               disabled={true}
                               aria-expanded={isFacultySelectOpen}
-                              className="w-full justify-between"
+                              className="h-10 w-full justify-between"
                             >
                               {(() => {
                                 const faculty = field.value
@@ -314,6 +327,7 @@ const EditCoordinator = () => {
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter coordinator email"
                           {...field}
@@ -334,7 +348,7 @@ const EditCoordinator = () => {
                           disabled={isUserEditMutating}
                           international
                           defaultCountry="MM"
-                          className="shadow-none"
+                          className="shadow-none [&>input]:h-10"
                           placeholder="Enter a phone number"
                           {...field}
                         />
@@ -344,24 +358,24 @@ const EditCoordinator = () => {
                   )}
                 />
               </div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  disabled={isUserEditMutating}
+                  onClick={handleResetForm}
+                  variant="secondary"
+                >
+                  Reset
+                </Button>
+                <Button
+                  loading={isUserEditMutating}
+                  form="edit-coordinator-form"
+                  type="submit"
+                >
+                  Update
+                </Button>
+              </div>
             </form>
           </Form>
-          <div className="flex justify-end gap-3">
-            <Button
-              disabled={isUserEditMutating}
-              onClick={handleResetForm}
-              variant="secondary"
-            >
-              Reset
-            </Button>
-            <Button
-              loading={isUserEditMutating}
-              form="edit-coordinator-form"
-              type="submit"
-            >
-              Update
-            </Button>
-          </div>
         </div>
       </div>
     )

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 import { useSession } from 'next-auth/react'
 
-import { PencilLine, Trash2 } from 'lucide-react'
+import { ChevronLeft, PencilLine, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useParams, useRouter } from 'next/navigation'
 import { useDeleteUser, useGetUser } from '@/features/users/api/users'
@@ -73,7 +73,15 @@ const ManagerDetail = () => {
     const user = data.result
 
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/managers')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <div className="border-input/75 sm:flex sm:items-center sm:justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-2xl font-semibold text-secondary-foreground sm:text-xl">

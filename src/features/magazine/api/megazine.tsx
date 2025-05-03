@@ -2,7 +2,10 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/api-client'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { AddMagazineFormValues } from '../utils/validator'
+import {
+  AddMagazineFormValues,
+  EditMagazineFormValues,
+} from '../utils/validator'
 import { EventItemResponse, EventResponse } from '../types'
 
 const createMagazine = async ({
@@ -100,5 +103,44 @@ export const useGetMagazine = (
     queryFn: () => getMagazine(token, magazine_id),
     enabled: enabled,
     refetchOnWindowFocus: false,
+  })
+}
+
+const updateMagazine = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: EditMagazineFormValues
+}): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.put<{ message: string }>(
+      '/updateEvent',
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to update the magazine.')
+  }
+}
+
+export const useUpdateMagazine = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: EditMagazineFormValues) =>
+      updateMagazine({ token, payload }),
+    onSuccess: () => {
+      toast.success('Your magazine has been updated successfully.')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
   })
 }
