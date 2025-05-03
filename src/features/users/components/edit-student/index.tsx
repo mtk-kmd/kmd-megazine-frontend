@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEditUser, useGetUser } from '@/features/users/api/users'
 import {
   Form,
@@ -25,7 +25,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { Check, ChevronDown, Info } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
@@ -44,6 +44,7 @@ import {
 } from '@/features/users/types'
 
 const EditStudent = () => {
+  const router = useRouter()
   const session = useSession()
   const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
@@ -187,9 +188,17 @@ const EditStudent = () => {
 
   if (isSuccess) {
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10 pt-5">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-5">
-          <div className="sm:flex sm:items-center">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/students')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <div className="mx-auto w-full max-w-2xl rounded-xl border bg-card p-4 shadow-sm sm:p-6 lg:p-8">
+          <div className="mb-6 sm:flex sm:items-center">
             <div className="sm:flex-auto">
               <h1 className="text-lg font-semibold">Edit Student</h1>
               <p className="mt-2 text-sm">
@@ -198,7 +207,11 @@ const EditStudent = () => {
             </div>
           </div>
           <Form {...form}>
-            <form id="edit-student-form" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              id="edit-student-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
               <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -208,6 +221,7 @@ const EditStudent = () => {
                       <FormLabel>Username</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter username"
                           {...field}
@@ -226,6 +240,7 @@ const EditStudent = () => {
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter first name"
                           {...field}
@@ -243,8 +258,48 @@ const EditStudent = () => {
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input
+                          className="h-10"
                           disabled={isUserEditMutating}
                           placeholder="Enter last name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="h-10"
+                          disabled={isUserEditMutating}
+                          placeholder="Enter student email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <PhoneInput
+                          disabled={isUserEditMutating}
+                          international
+                          defaultCountry="MM"
+                          className="shadow-none [&>input]:h-10"
+                          placeholder="Enter a phone number"
                           {...field}
                         />
                       </FormControl>
@@ -270,7 +325,7 @@ const EditStudent = () => {
                               role="combobox"
                               disabled={true}
                               aria-expanded={isFacultySelectOpen}
-                              className="w-full justify-between"
+                              className="h-10 w-full justify-between pr-1.5"
                             >
                               {(() => {
                                 const faculty = field.value
@@ -301,63 +356,25 @@ const EditStudent = () => {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>Email Address</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={isUserEditMutating}
-                          placeholder="Enter student email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <PhoneInput
-                          disabled={isUserEditMutating}
-                          international
-                          defaultCountry="MM"
-                          className="shadow-none"
-                          placeholder="Enter a phone number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  disabled={isUserEditMutating}
+                  onClick={handleResetForm}
+                  variant="secondary"
+                >
+                  Reset
+                </Button>
+                <Button
+                  loading={isUserEditMutating}
+                  form="edit-student-form"
+                  type="submit"
+                >
+                  Update
+                </Button>
               </div>
             </form>
           </Form>
-          <div className="flex justify-end gap-3">
-            <Button
-              disabled={isUserEditMutating}
-              onClick={handleResetForm}
-              variant="secondary"
-            >
-              Reset
-            </Button>
-            <Button
-              loading={isUserEditMutating}
-              form="edit-student-form"
-              type="submit"
-            >
-              Update
-            </Button>
-          </div>
         </div>
       </div>
     )

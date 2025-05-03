@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import { useDeleteUser, useGetUser } from '@/features/users/api/users'
 import {
   Calendar,
+  ChevronLeft,
   Download,
   Eye,
   FileText,
@@ -87,21 +88,32 @@ const StudentDetail = () => {
     const user = data.result
 
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mb-2 w-fit"
+          onClick={() => router.back()}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <div className="border-input/75 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <h3 className="flex items-center gap-2 text-2xl font-semibold text-secondary-foreground sm:text-xl">
-              Student #{params.studentId}
-              <Badge
-                className="rounded-md border-none ring-0"
-                variant={user.status ? 'success' : 'destructive'}
-              >
-                {user.status ? 'Active' : 'Inactive'}
-              </Badge>
-            </h3>
-            <p className="mt-1 max-w-2xl text-sm/6 text-muted-foreground">
-              Personal details and academic contributions
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="flex items-center gap-2 text-2xl font-semibold text-secondary-foreground sm:text-xl">
+                Student #{params.studentId}
+                <Badge
+                  className="rounded-md border-none ring-0"
+                  variant={user.status ? 'success' : 'destructive'}
+                >
+                  {user.status ? 'Active' : 'Inactive'}
+                </Badge>
+              </h3>
+              <p className="mt-1 max-w-2xl text-sm/6 text-muted-foreground">
+                Personal details and academic contributions
+              </p>
+            </div>
           </div>
           <div className="mt-3 flex gap-2 sm:ml-4 sm:mt-0">
             <Button

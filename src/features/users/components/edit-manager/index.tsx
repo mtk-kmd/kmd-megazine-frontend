@@ -26,8 +26,11 @@ import {
   UserEditPayload,
   UserWithOptionalFaculty,
 } from '@/features/users/types'
+import { ChevronLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const EditManager = () => {
+  const router = useRouter()
   const session = useSession()
   const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
@@ -109,9 +112,17 @@ const EditManager = () => {
 
   if (isSuccess) {
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10 pt-5">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-5">
-          <div className="sm:flex sm:items-center">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/managers')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <div className="mx-auto w-full max-w-2xl rounded-xl border bg-card p-4 shadow-sm sm:p-6 lg:p-8">
+          <div className="mb-6 sm:flex sm:items-center">
             <div className="sm:flex-auto">
               <h1 className="text-lg font-semibold">Edit Manager</h1>
               <p className="mt-2 text-sm">
@@ -120,7 +131,11 @@ const EditManager = () => {
             </div>
           </div>
           <Form {...form}>
-            <form id="edit-manager-form" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              id="edit-manager-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
               <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -213,24 +228,24 @@ const EditManager = () => {
                   )}
                 />
               </div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  disabled={isUserEditMutating}
+                  onClick={handleResetForm}
+                  variant="secondary"
+                >
+                  Reset
+                </Button>
+                <Button
+                  loading={isUserEditMutating}
+                  form="edit-manager-form"
+                  type="submit"
+                >
+                  Update
+                </Button>
+              </div>
             </form>
           </Form>
-          <div className="flex justify-end gap-3">
-            <Button
-              disabled={isUserEditMutating}
-              onClick={handleResetForm}
-              variant="secondary"
-            >
-              Reset
-            </Button>
-            <Button
-              loading={isUserEditMutating}
-              form="edit-manager-form"
-              type="submit"
-            >
-              Update
-            </Button>
-          </div>
         </div>
       </div>
     )
