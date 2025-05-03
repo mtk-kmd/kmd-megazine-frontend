@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react'
 
 import { useGetAnalytic } from '@/features/dashboard/api/dashboard'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorWidget } from '@/components/ui/error-widget'
 
 const Statistic = () => {
   const session = useSession()
@@ -46,7 +47,14 @@ const Statistic = () => {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>
+    return (
+      <ErrorWidget
+        type="error"
+        title={error.name}
+        description={error.message}
+        className="rounded-xl border border-border"
+      />
+    )
   }
 
   if (isSuccess && data) {

@@ -5,6 +5,7 @@ import { columns } from './brower-usage-columns'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DataTable } from '@/components/ui/data-table'
 import { useGetBrowserUsages } from '@/features/dashboard/api/dashboard'
+import { ErrorWidget } from '@/components/ui/error-widget'
 
 const BrowserUsage = () => {
   const session = useSession()
@@ -48,7 +49,14 @@ const BrowserUsage = () => {
   }
 
   if (error) {
-    return <div>Error fetching browser usage data: {error.message}</div>
+    return (
+      <ErrorWidget
+        title={error.name}
+        description={error.message}
+        className="rounded-xl border border-border"
+        type="error"
+      />
+    )
   }
 
   if (isSuccess) {
