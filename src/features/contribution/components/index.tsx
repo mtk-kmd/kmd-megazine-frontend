@@ -1,3 +1,3 @@
 import AddContribution from './add-contribution'
 
-export { AddContribution }
+export { default as AddContribution } from './add-contribution'

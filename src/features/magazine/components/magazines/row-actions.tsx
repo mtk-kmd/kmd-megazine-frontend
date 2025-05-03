@@ -75,7 +75,7 @@ const RowActions = ({ row }: RowActionsProps) => {
   if (role === 'student') {
     return (
       <div className="flex items-center gap-2">
-        <Link href={`/magazines/${row.event_id}/contributions`}>
+        <Link href={`/magazines/${row.event_id}/add-contribution`}>
           <Button size="sm" className="flex items-center gap-2">
             <Upload className="h-4 w-4" />
             <span>Submit</span>
