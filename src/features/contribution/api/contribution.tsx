@@ -67,6 +67,64 @@ export const useCreateContribution = (token: string) => {
   })
 }
 
+const updateContribution = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: AddContributionValues & { submission_id: number }
+}): Promise<CreatedContributionResponse> => {
+  try {
+    const formData = new FormData()
+    formData.append('submission_id', payload.submission_id.toString())
+    formData.append('event_id', payload.event_id.toString())
+    formData.append('user_id', payload.user_id.toString())
+    formData.append('title', payload.title)
+    formData.append('content', payload.content)
+    formData.append('agreed_to_terms', payload.agreed_to_terms.toString())
+
+    if (payload.images && payload.images.length > 0) {
+      payload.images.forEach((image) => {
+        formData.append('images', image)
+      })
+    }
+
+    if (payload.articleFile) {
+      formData.append('articleFile', payload.articleFile)
+    }
+
+    const response = await apiClient.put<CreatedContributionResponse>(
+      '/updateStudentContribution',
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to update contribution.')
+  }
+}
+
+export const useUpdateContribution = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: AddContributionValues & { submission_id: number }) =>
+      updateContribution({ token, payload }),
+    onSuccess: () => {
+      toast('Your contribution has been successfully updated.')
+    },
+    onError: () => {
+      toast('Unable to update your contribution. Please try again.')
+    },
+  })
+}
+
 const getContributions = async ({
   token,
   role,
@@ -90,11 +148,13 @@ const getContributions = async ({
 
     const contributions = response.data.result.filter((item) => {
       if (role === 'student') {
-        return item.student_id === user_id
-      } else if (role === 'guest' || role === 'coordinator') {
-        return item.student.StudentFaculty?.faculty_id === faculty_id
+        return item.student_id === user_id && !!item.event
+      } else if (role === 'guest' || role === 'marketing_coordinator') {
+        return (
+          item.student.StudentFaculty?.faculty_id === faculty_id && !!item.event
+        )
       }
-      return true
+      return !!item.event
     })
 
     return {

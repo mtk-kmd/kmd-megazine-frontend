@@ -83,7 +83,7 @@ export function ContributionContent({
 
       const a = document.createElement('a')
       a.href = downloadUrl
-      a.download = `${contribution.student_id}-${contribution.student.user_name.replace(/\s+/g, '')}-${dayjs().format('YYYY-MM-DD')}-contribution.zip`
+      a.download = `Contribution-${contribution.submission_id}-${contribution.student.user_name.replace(/\s+/g, '')}-${dayjs().format('YYYY-MM-DD')}.zip`
       a.click()
       URL.revokeObjectURL(downloadUrl)
 

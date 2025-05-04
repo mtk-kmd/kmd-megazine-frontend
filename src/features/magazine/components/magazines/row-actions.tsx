@@ -73,16 +73,42 @@ const RowActions = ({ row }: RowActionsProps) => {
   }
 
   if (role === 'student') {
-    return (
-      <div className="flex items-center gap-2">
-        <Link href={`/magazines/${row.event_id}/add-contribution`}>
-          <Button size="sm" className="flex items-center gap-2">
-            <Upload className="h-4 w-4" />
-            <span>Submit</span>
-          </Button>
-        </Link>
-      </div>
-    )
+    const currentDate = new Date()
+    const finalClosureDate = new Date(row.closure.final_closure)
+
+    if (currentDate > finalClosureDate) {
+      return (
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex items-center gap-2 text-destructive"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Overdue</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[200px]">
+              You can no longer contribute to this magazine as the deadline has
+              passed.
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )
+    } else {
+      return (
+        <div className="flex items-center gap-2">
+          <Link href={`/magazines/${row.event_id}/add-contribution`}>
+            <Button size="sm" className="flex items-center gap-2">
+              <Upload className="h-4 w-4" />
+              <span>Submit</span>
+            </Button>
+          </Link>
+        </div>
+      )
+    }
   }
 
   return (

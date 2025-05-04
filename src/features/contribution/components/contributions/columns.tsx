@@ -1,17 +1,19 @@
+import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import RowActions from './row-actions'
 import { Contribution } from '../../types'
-import { ColumnDef } from '@tanstack/react-table'
-import { Badge, BadgeProps } from '@/components/ui/badge'
-import { AlertTriangle, Check, Download, Loader } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import DownloadAction from './download-action'
+import { ColumnDef, Row } from '@tanstack/react-table'
+import { Badge, BadgeProps } from '@/components/ui/badge'
+import { AlertTriangle, Check, Loader } from 'lucide-react'
 
-export const columns: ColumnDef<Contribution>[] = [
+export const getColumns = (role: string): ColumnDef<Contribution>[] => [
   {
     accessorKey: 'submission_id',
     header: () => <div className="whitespace-nowrap">ID</div>,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('submission_id')}</div>
+    ),
   },
   {
     accessorKey: 'title',
@@ -56,16 +58,53 @@ export const columns: ColumnDef<Contribution>[] = [
       }
 
       return (
-        <Badge
-          variant={variant as BadgeProps['variant']}
-          className="whitespace-nowrap rounded-sm px-2 py-1"
-        >
-          {Icon && <Icon className={cn('mr-1 h-3 w-3', className)} />}
-          <span className="capitalize">{status.toLowerCase()}</span>
-        </Badge>
+        <div className="whitespace-nowrap">
+          <Badge
+            variant={variant as BadgeProps['variant']}
+            className="rounded-sm px-2 py-1"
+          >
+            {Icon && <Icon className={cn('mr-1 h-3 w-3', className)} />}
+            <span className="capitalize">{status.toLowerCase()}</span>
+          </Badge>
+        </div>
       )
     },
   },
+  ...(role === 'admin' || role === 'manager'
+    ? [
+        {
+          accessorFn: (row: Contribution) =>
+            row.student?.StudentFaculty?.faculty_id,
+          header: () => <div className="whitespace-nowrap">Faculty</div>,
+          id: 'faculty',
+          accessorKey: 'faculty',
+          cell: ({ row }: { row: Row<Contribution> }) => (
+            <div
+              className="whitespace-nowrap"
+              key={row.original?.student?.StudentFaculty?.faculty_id}
+            >
+              {row.original?.student?.StudentFaculty
+                ? row.original?.student?.StudentFaculty.faculty.name
+                : 'N/A'}
+            </div>
+          ),
+          filterFn: (row: Row<Contribution>, id: string, value: string) => {
+            const facultyId = row.getValue(id)
+            return value.includes(facultyId ? String(facultyId) : '')
+          },
+        },
+      ]
+    : [
+        {
+          accessorKey: 'faculty.name',
+          header: () => <div className="whitespace-nowrap">Faculty</div>,
+          cell: ({ row }: { row: Row<Contribution> }) => (
+            <div className="whitespace-nowrap">
+              {row.original.student?.StudentFaculty?.faculty.name || 'N/A'}
+            </div>
+          ),
+        },
+      ]),
   {
     accessorKey: 'submittedAt',
     header: () => <div className="whitespace-nowrap">Submitted At</div>,
@@ -78,9 +117,11 @@ export const columns: ColumnDef<Contribution>[] = [
   {
     accessorKey: 'uploadUrl',
     header: () => <div className="whitespace-nowrap">No. of Upload</div>,
-    cell: ({ row }) => {
-      return <DownloadAction row={row.original} />
-    },
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">
+        <DownloadAction row={row.original} />
+      </div>
+    ),
   },
   {
     accessorKey: 'updatedAt',

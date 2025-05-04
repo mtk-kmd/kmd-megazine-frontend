@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUpdateSubmissionStatus } from '@/features/contribution/api/contribution'
 import { useState } from 'react'
+import Link from 'next/link'
 
 interface ContributionHeaderProps {
   contribution: Contribution
@@ -54,6 +55,15 @@ export function ContributionHeader({ contribution }: ContributionHeaderProps) {
         <ArrowLeft className="h-4 w-4" />
         Back
       </Button>
+
+      {role === 'student' && (
+        <Button size="sm" variant="outline" className="gap-2" asChild>
+          <Link href={`/contributions/${contribution.submission_id}/edit`}>
+            Edit
+          </Link>
+        </Button>
+      )}
+
       {role === 'marketing_coordinator' &&
         contribution.submission_status === 'PENDING' && (
           <div className="flex items-center gap-3">

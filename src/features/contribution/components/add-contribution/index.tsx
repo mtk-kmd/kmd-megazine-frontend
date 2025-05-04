@@ -131,6 +131,7 @@ const AddContribution = () => {
           addContributionForm.clearErrors()
           setImageFiles([])
           setArticleFile(null)
+          router.push(`/contributions`)
         },
       }
     )
