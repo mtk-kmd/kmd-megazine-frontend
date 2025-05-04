@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react'
-import { columns } from './columns'
+import { getColumns } from './columns'
 
 import { ROLE_NAME } from '@/utils/constants'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -13,6 +13,7 @@ export function ContributionList() {
   const role_id = session?.data?.user.data.role_id as keyof typeof ROLE_NAME
 
   const user_id = session?.data?.user.data.user_id as number
+
   const faculty_id =
     (session?.data?.user.data?.StudentFaculty?.faculty_id as number) ||
     (session?.data?.user.data?.Faculty?.faculty_id as number)
@@ -76,7 +77,7 @@ export function ContributionList() {
       <DataTable
         searchLabel="Search by title"
         data={result}
-        columns={columns}
+        columns={getColumns(role)}
       />
     )
   }

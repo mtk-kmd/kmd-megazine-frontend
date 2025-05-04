@@ -32,6 +32,12 @@ const adminNavItems = [
     icon: LayoutGrid,
     items: [],
   },
+  {
+    title: 'Contributions',
+    url: '/contributions',
+    icon: GalleryVerticalEnd,
+    items: [],
+  },
 ]
 
 const managerNavItems = [
@@ -70,12 +76,6 @@ const coordinatorNavItems = [
     title: 'Contributions',
     url: '/contributions',
     icon: GalleryVerticalEnd,
-    items: [],
-  },
-  {
-    title: 'Students',
-    url: '/students',
-    icon: Users,
     items: [],
   },
 ]

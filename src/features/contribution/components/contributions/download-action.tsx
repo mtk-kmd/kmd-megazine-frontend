@@ -44,7 +44,7 @@ const DownloadAction = ({ row }: { row: Contribution }) => {
 
       const a = document.createElement('a')
       a.href = downloadUrl
-      a.download = `${row.student_id}-${row.student.user_name.replace(/\s+/g, '')}-${dayjs().format('YYYY-MM-DD')}-contribution.zip`
+      a.download = `Contribution-${row.submission_id}-${row.student.user_name.replace(/\s+/g, '')}-${dayjs().format('YYYY-MM-DD')}.zip`
       a.click()
       URL.revokeObjectURL(downloadUrl)
 
