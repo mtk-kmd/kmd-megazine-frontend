@@ -30,6 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog'
+import { useRouter } from 'next/navigation'
 
 export function NavUser({
   user,
@@ -40,6 +41,7 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const router = useRouter()
   const { isMobile } = useSidebar()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -52,6 +54,7 @@ export function NavUser({
   const hadleLogoutConfirm = () => {
     setIsLogoutOpen(false)
     signOut()
+    router.push('/login')
   }
 
   return (

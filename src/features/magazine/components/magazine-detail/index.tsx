@@ -1,105 +1,28 @@
 'use client'
+import Link from 'next/link'
 import { format } from 'date-fns'
-import { Contribution, Event } from '../../types'
-
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft } from 'lucide-react'
-
+import { ChevronLeft, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 
-import contributionColumns from './contribution-columns'
-import Link from 'next/link'
-import { useGetMagazine } from '../../api/megazine'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
+
+import dayjs from 'dayjs'
+import { toast } from 'sonner'
 import { useState } from 'react'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { zipSync } from 'fflate'
+import contributionColumns from './contribution-columns'
+import { useGetMagazine } from '@/features/magazine/api/megazine'
+import { Separator } from '@/components/ui/separator'
 
 const MagazineDetail = () => {
   const session = useSession()
+  const [isLoading, setIsLoading] = useState(false)
   const { magazineId } = useParams<{ magazineId: string }>()
   const accessToken = session?.data?.user.token as string
-
-  const [isPublishOpen, setIsPublishOpen] = useState(false)
-
-  const handlePublishOpen = (open: boolean) => {
-    setIsPublishOpen(open)
-  }
-
-  const confirmPublish = () => {
-    console.log('Publish magazine:', magazineId)
-    setIsPublishOpen(false)
-  }
-
-  const [contributions, setContributions] = useState<Contribution[]>([
-    {
-      id: '1',
-      title: 'The Future of AI',
-      state: 'selected',
-      submittedDate: '2025-03-10T14:30:00Z',
-      student: { id: '101', name: 'John Doe', email: 'john.doe@example.com' },
-      faculty: { id: '201', name: 'Information Science' },
-      images: [
-        'https://images.unsplash.com/photo-1742836531244-de8454b8bc06?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745750747228-d7ae37cba3a5?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745512751454-710500481a82?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745750747233-c09276a878b3?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ],
-      createdAt: '2025-03-10T14:30:00Z',
-      comments: [
-        {
-          id: '301',
-          text: 'Great work!',
-          coordinator: {
-            id: '501',
-            name: 'Dr. Johnson',
-          },
-          createdAt: '2025-03-12T10:00:00Z',
-        },
-      ],
-      articleFile: {
-        id: '401',
-        name: 'research.pdf',
-        url: 'https://kmdeducation-my.sharepoint.com/:w:/g/personal/psthwim1_kmd_edu_mm/EawhryBRDU1Lu2g-CdD7UjEBQh808OpWSTw3sNn8yd6VmQ?e=QcqnKQ',
-      },
-    },
-    {
-      id: '2',
-      title: 'Exploring renewable energy options...',
-      state: 'submitted',
-      submittedDate: '2025-03-12T11:20:00Z',
-      student: {
-        id: '102',
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-      },
-      faculty: { id: '202', name: 'Information Science' },
-      createdAt: '2025-03-12T11:20:00Z',
-      comments: [],
-
-      images: [
-        'https://images.unsplash.com/photo-1742836531244-de8454b8bc06?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745750747228-d7ae37cba3a5?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745512751454-710500481a82?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'https://images.unsplash.com/photo-1745750747233-c09276a878b3?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ],
-      articleFile: {
-        id: '402',
-        name: 'presentation.pptx',
-        url: '/files/presentation.pptx',
-      },
-    },
-  ])
 
   const { data, isPending, error, isSuccess } = useGetMagazine(
     accessToken,
@@ -117,6 +40,59 @@ const MagazineDetail = () => {
 
   if (isSuccess) {
     const { result: event } = data
+
+    const downloadUrlsAsZip = async (uploadUrls: string[]) => {
+      setIsLoading(true)
+
+      try {
+        const files: Record<string, Uint8Array> = {}
+
+        await Promise.all(
+          uploadUrls.map(async (url) => {
+            if (!url) return
+
+            const response = await fetch(url)
+            if (!response.ok)
+              throw new Error(`Failed to fetch ${url}: ${response.status}`)
+
+            const arrayBuffer = await response.arrayBuffer()
+            const fileName = decodeURIComponent(
+              url.split('/').pop()?.split('?')[0] || ''
+            )
+              .split('-')
+              .slice(1)
+              .join('-')
+            files[fileName] = new Uint8Array(arrayBuffer)
+          })
+        )
+
+        if (Object.keys(files).length === 0)
+          throw new Error('No valid files to download')
+
+        const zipped = zipSync(files)
+        const blob = new Blob([zipped], { type: 'application/zip' })
+        const downloadUrl = URL.createObjectURL(blob)
+
+        const a = document.createElement('a')
+        a.href = downloadUrl
+        a.download = `Event-${event.event_id}-${event.title.replace(/\s+/g, '-')}-${dayjs().format('YYYY-MM-DD')}.zip`
+        a.click()
+        URL.revokeObjectURL(downloadUrl)
+
+        toast.success('Your files have been successfully downloaded.')
+      } catch (error) {
+        console.log(error)
+        toast.error('Failed to download files. Please try again.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    const acceptedUploadUrls = event.StudentSubmission.filter(
+      (contribution) => contribution.submission_status === 'ACCEPTED'
+    )
+      .flatMap((contribution) => contribution.uploadUrl || [])
+      .filter((url): url is string => typeof url === 'string')
 
     return (
       <div className="container mx-auto p-4">
@@ -202,25 +178,29 @@ const MagazineDetail = () => {
           </div>
         </div>
 
-        <AlertDialog open={isPublishOpen} onOpenChange={setIsPublishOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Publish Magazine</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to publish this magazine? Once published,
-                it will be visible to all users.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button onClick={confirmPublish}>Publish</Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
         <div className="grid gap-4">
-          <h2 className="text-xl font-semibold">Contributions</h2>
-          <DataTable columns={contributionColumns} data={contributions} />
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Contributions</h2>
+            <div className="flex items-center space-x-4">
+              <div className="text-muted-foreground">
+                Total Selected files: {acceptedUploadUrls.length}
+              </div>
+              <Separator orientation="vertical" className="h-6" />
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={isLoading}
+                onClick={() => downloadUrlsAsZip(acceptedUploadUrls)}
+              >
+                {!isLoading && <Download className="mr-2 h-4 w-4" />}
+                Download All
+              </Button>
+            </div>
+          </div>
+          <DataTable
+            columns={contributionColumns}
+            data={data.result.StudentSubmission}
+          />
         </div>
       </div>
     )

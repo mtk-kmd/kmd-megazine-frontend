@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useUpdateSubmissionStatus } from '@/features/contribution/api/contribution'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface ContributionHeaderProps {
   contribution: Contribution
@@ -14,6 +15,7 @@ interface ContributionHeaderProps {
 
 export function ContributionHeader({ contribution }: ContributionHeaderProps) {
   const session = useSession()
+  const router = useRouter()
   const accessToken = session?.data?.user.token as string
   const [loadingStatus, setLoadingStatus] = useState<
     'ACCEPTED' | 'REJECTED' | undefined
@@ -51,7 +53,12 @@ export function ContributionHeader({ contribution }: ContributionHeaderProps) {
 
   return (
     <div className="flex items-center justify-between">
-      <Button size="sm" className="gap-2" variant="secondary">
+      <Button
+        onClick={() => router.push('/contributions')}
+        size="sm"
+        className="gap-2"
+        variant="secondary"
+      >
         <ArrowLeft className="h-4 w-4" />
         Back
       </Button>

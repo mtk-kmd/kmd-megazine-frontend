@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Contribution } from '@/features/magazine/types'
 import ContributionDetail from './contribution-detail'
+import { Contribution } from '@/features/contribution/types'
 
 interface ContributionActionsProps {
   contribution: Contribution

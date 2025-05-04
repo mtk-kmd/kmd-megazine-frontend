@@ -1,18 +1,19 @@
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { ColumnDef } from '@tanstack/react-table'
-import { Contribution } from '@/features/magazine/types'
-import { ContributionActions } from './contribution-actions'
 
-const getSubmissionStateBadgeVariant = (state: Contribution['state']) => {
+import { ContributionActions } from './contribution-actions'
+import { Contribution } from '@/features/contribution/types'
+
+const getSubmissionStateBadgeVariant = (
+  state: Contribution['submission_status']
+) => {
   switch (state) {
-    case 'submitted':
+    case 'ACCEPTED':
       return 'info'
-    case 'underReview':
+    case 'PENDING':
       return 'warning'
-    case 'selected':
-      return 'success'
-    case 'rejected':
+    case 'REJECTED':
       return 'destructive'
     default:
       return 'secondary'
@@ -21,34 +22,40 @@ const getSubmissionStateBadgeVariant = (state: Contribution['state']) => {
 
 const contributionColumns: ColumnDef<Contribution>[] = [
   {
-    accessorKey: 'student.name',
+    accessorKey: 'student',
     header: 'Student Name',
+    cell: ({ row }) => {
+      const student = row.getValue('student') as Contribution['student']
+      return `${student.first_name} ${student.last_name}`
+    },
   },
   {
     accessorKey: 'title',
     header: 'Contribution Title',
   },
   {
-    accessorKey: 'faculty.name',
+    accessorKey: 'student.StudentFaculty.faculty.name',
     header: 'Faculty Name',
   },
   {
-    accessorKey: 'state',
+    accessorKey: 'submission_status',
     header: 'Status',
     cell: ({ row }) => {
-      const state = row.getValue('state') as Contribution['state']
+      const status = row.getValue(
+        'submission_status'
+      ) as Contribution['submission_status']
       return (
-        <Badge variant={getSubmissionStateBadgeVariant(state)}>
-          {state.charAt(0).toUpperCase() + state.slice(1)}
+        <Badge variant={getSubmissionStateBadgeVariant(status)}>
+          {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
         </Badge>
       )
     },
   },
   {
-    accessorKey: 'submittedDate',
+    accessorKey: 'submittedAt',
     header: 'Submitted Date',
     cell: ({ row }) => {
-      return format(new Date(row.getValue('submittedDate')), 'PPP')
+      return format(new Date(row.getValue('submittedAt')), 'PPP')
     },
   },
   {

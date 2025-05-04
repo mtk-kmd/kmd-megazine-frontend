@@ -19,6 +19,7 @@ export type User = {
 export type UserWithOptionalFaculty = User & {
   StudentFaculty?: StudentFaculty
   Faculty?: Faculty
+  GuestFaculty?: GuestFaculty
 }
 
 export type GetUsersResponse = {
@@ -73,6 +74,12 @@ export type StudentFaculty = {
   student_id: number
   faculty_id: number
   faculty: Faculty
+}
+
+export type GuestFaculty = {
+  guest_faculty_id: number
+  guest_id: number
+  faculty_id: number
 }
 
 export type GetUserApiResponse = {

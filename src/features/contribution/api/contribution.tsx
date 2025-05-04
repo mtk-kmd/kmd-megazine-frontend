@@ -149,7 +149,9 @@ const getContributions = async ({
     const contributions = response.data.result.filter((item) => {
       if (role === 'student') {
         return item.student_id === user_id && !!item.event
-      } else if (role === 'guest' || role === 'marketing_coordinator') {
+      } else if (role === 'guest') {
+        return item.submission_status === 'ACCEPTED' && !!item.event
+      } else if (role === 'marketing_coordinator') {
         return (
           item.student.StudentFaculty?.faculty_id === faculty_id && !!item.event
         )

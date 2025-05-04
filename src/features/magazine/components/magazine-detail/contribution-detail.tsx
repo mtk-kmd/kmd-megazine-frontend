@@ -11,21 +11,28 @@ import {
 } from '@/components/ui/drawer'
 
 import { format } from 'date-fns'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
-  Download,
   FileText,
   MessageSquare,
   X,
   Image as LucideImage,
+  Download,
 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
-import Image from 'next/image'
-import { Contribution } from '../../types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
+import { Contribution } from '@/features/contribution/types'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useState } from 'react'
+import { zipSync } from 'fflate'
+import { toast } from 'sonner'
+import dayjs from 'dayjs'
+import { Separator } from '@/components/ui/separator'
+import Image from 'next/image'
+import { ErrorWidget } from '@/components/ui/error-widget'
 
 interface ContributiionDetailProps {
   contribution?: Contribution
@@ -33,15 +40,15 @@ interface ContributiionDetailProps {
   onOpenChange: (open: boolean) => void
 }
 
-const getSubmissionStateBadgeVariant = (state: Contribution['state']) => {
+const getSubmissionStateBadgeVariant = (
+  state: Contribution['submission_status']
+) => {
   switch (state) {
-    case 'submitted':
+    case 'ACCEPTED':
       return 'info'
-    case 'underReview':
+    case 'PENDING':
       return 'warning'
-    case 'selected':
-      return 'success'
-    case 'rejected':
+    case 'REJECTED':
       return 'destructive'
     default:
       return 'secondary'
@@ -53,7 +60,83 @@ const ContributionDetail = ({
   open,
   onOpenChange,
 }: ContributiionDetailProps) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const uploadUrls = (contribution?.uploadUrl as string[]) || []
+
   if (!contribution) return null
+
+  const downloadUrlsAsZip = async () => {
+    setIsLoading(true)
+    try {
+      const files: Record<string, Uint8Array> = {}
+
+      await Promise.all(
+        uploadUrls.map(async (url) => {
+          if (!url) return
+
+          const response = await fetch(url)
+          if (!response.ok)
+            throw new Error(`Failed to fetch ${url}: ${response.status}`)
+
+          const arrayBuffer = await response.arrayBuffer()
+          const fileName = decodeURIComponent(
+            url.split('/').pop()?.split('?')[0] || ''
+          )
+            .split('-')
+            .slice(1)
+            .join('-')
+          files[fileName] = new Uint8Array(arrayBuffer)
+        })
+      )
+
+      if (Object.keys(files).length === 0)
+        throw new Error('No valid files to download')
+
+      const zipped = zipSync(files)
+      const blob = new Blob([zipped], { type: 'application/zip' })
+      const downloadUrl = URL.createObjectURL(blob)
+
+      const a = document.createElement('a')
+      a.href = downloadUrl
+      a.download = `Contribution-${contribution.submission_id}-${contribution.student.user_name.replace(/\s+/g, '')}-${dayjs().format('YYYY-MM-DD')}.zip`
+      a.click()
+      URL.revokeObjectURL(downloadUrl)
+
+      toast.success('Your files have been successfully downloaded.')
+    } catch (error) {
+      toast.error('Failed to download files. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const downloadFile = async (url: string) => {
+    try {
+      const response = await fetch(url)
+      if (!response.ok)
+        throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
+
+      const blob = await response.blob()
+      const fileName = url.split('/').pop()?.split('?')[0] || ''
+      const decodedFileName = decodeURIComponent(fileName)
+        .split('-')
+        .slice(1)
+        .join('-')
+
+      const downloadUrl = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = decodedFileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(downloadUrl)
+      toast.success('File downloaded successfully')
+    } catch (error) {
+      console.error('Download error:', error)
+      toast.error('Download failed. Please try again.')
+    }
+  }
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -67,7 +150,7 @@ const ContributionDetail = ({
                 </DrawerTitle>
                 <DrawerDescription>
                   Submitted on{' '}
-                  {format(new Date(contribution.submittedDate), 'PPP')}
+                  {format(new Date(contribution.submittedAt), 'PPP')}
                 </DrawerDescription>
               </div>
               <DrawerClose asChild>
@@ -93,7 +176,6 @@ const ContributionDetail = ({
                 </TabsTrigger>
                 <TabsTrigger
                   value="images"
-                  disabled={!contribution.images?.length}
                   className="flex items-center gap-1.5"
                 >
                   <LucideImage className="h-4 w-4" />
@@ -101,7 +183,6 @@ const ContributionDetail = ({
                 </TabsTrigger>
                 <TabsTrigger
                   value="comments"
-                  disabled={!contribution.comments.length}
                   className="flex items-center gap-1.5"
                 >
                   <MessageSquare className="h-4 w-4" />
@@ -119,12 +200,12 @@ const ContributionDetail = ({
                     </h3>
                     <Badge
                       variant={getSubmissionStateBadgeVariant(
-                        contribution.state
+                        contribution.submission_status
                       )}
                       className="px-2.5 py-0.5 text-sm"
                     >
-                      {contribution.state.charAt(0).toUpperCase() +
-                        contribution.state.slice(1)}
+                      {contribution.submission_status.charAt(0).toUpperCase() +
+                        contribution.submission_status.slice(1)}
                     </Badge>
                   </div>
                   <Card className="overflow-hidden shadow-none">
@@ -136,7 +217,7 @@ const ContributionDetail = ({
                           </p>
                           <div className="sm:col-span-2">
                             <p className="font-medium">
-                              {contribution.student.name}
+                              {contribution.student.user_name}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {contribution.student.email}
@@ -148,86 +229,142 @@ const ContributionDetail = ({
                             Faculty
                           </p>
                           <p className="font-medium sm:col-span-2">
-                            {contribution.faculty.name}
+                            {contribution.student.StudentFaculty?.faculty.name}
                           </p>
                         </div>
                         <div className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3">
                           <p className="text-sm font-medium text-muted-foreground">
-                            Submitted
+                            Submitted at
                           </p>
                           <p className="font-medium sm:col-span-2">
-                            {format(
-                              new Date(contribution.submittedDate),
-                              'PPP'
-                            )}
+                            {format(new Date(contribution.submittedAt), 'PPP')}
                           </p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Attachments
+                          </p>
+                          <div className="flex items-center justify-between sm:col-span-2">
+                            <p className="font-medium">
+                              {contribution.uploadUrl?.length || 0}{' '}
+                              {contribution.uploadUrl?.length === 1
+                                ? 'File'
+                                : 'Files'}
+                            </p>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              loading={isLoading}
+                              onClick={downloadUrlsAsZip}
+                              disabled={!contribution.uploadUrl?.length}
+                              className="ml-4"
+                            >
+                              {!isLoading && (
+                                <Download className="mr-2 h-4 w-4" />
+                              )}
+                              Download All
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                  {contribution.articleFile && (
-                    <Card className="shadow-none">
-                      <CardContent className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="truncate">
-                          <p className="font-medium">
-                            {contribution.articleFile.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Article document
-                          </p>
-                        </div>
-                        <Button
-                          size="sm"
-                          asChild
-                          variant="secondary"
-                          className="mt-2 sm:mt-0"
+                  {contribution.uploadUrl
+                    .filter((url) => {
+                      const fileName = decodeURIComponent(
+                        url.split('/').pop()?.split('?')[0] || ''
+                      )
+                        .split('-')
+                        .slice(1)
+                        .join('-')
+                      const fileExtension = fileName
+                        .split('.')
+                        .pop()
+                        ?.toLowerCase()
+                      return fileExtension === 'doc' || fileExtension === 'docx'
+                    })
+                    .map((url, index) => {
+                      const fileName = decodeURIComponent(
+                        url.split('/').pop()?.split('?')[0] || ''
+                      )
+                        .split('-')
+                        .slice(1)
+                        .join('-')
+
+                      const fileExtension = fileName
+                        .split('.')
+                        .pop()
+                        ?.toUpperCase()
+
+                      return (
+                        <Card
+                          key={index}
+                          className="shadow-none transition-colors hover:bg-accent/50"
                         >
-                          <a
-                            href={contribution.articleFile.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2"
-                          >
-                            <Download className="size-4" />
-                            Download
-                          </a>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
+                          <CardContent className="flex items-center justify-between p-4">
+                            <div className="flex items-center space-x-4">
+                              <FileText className="h-8 w-8 text-muted-foreground" />
+                              <div>
+                                <p className="max-w-[200px] truncate font-medium">
+                                  {fileName}
+                                </p>
+                                <Badge variant="secondary" className="mt-1">
+                                  {fileExtension}
+                                </Badge>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => downloadFile(url)}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                 </div>
               </TabsContent>
 
               <TabsContent value="images" className="space-y-6 pb-4">
-                {contribution.images && contribution.images.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Images</h3>
-                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                      {contribution.images.map((image, index) => (
-                        <div
-                          key={index}
-                          className="relative aspect-[4/3] overflow-hidden rounded-lg border"
-                        >
-                          <Image
-                            src={image}
-                            alt={`Contribution image ${index + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      ))}
+                {contribution.uploadUrl
+                  .filter((url) => {
+                    const fileName = url.split('/').pop()?.split('?')[0] || ''
+                    const fileExtension = fileName
+                      .split('.')
+                      .pop()
+                      ?.toLowerCase()
+                    return ['jpg', 'jpeg', 'png', 'gif'].includes(
+                      fileExtension || ''
+                    )
+                  })
+                  .map((imageUrl, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-[4/3] overflow-hidden rounded-lg border"
+                    >
+                      <Image
+                        src={imageUrl}
+                        alt={`Contribution image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                  </div>
-                )}
+                  ))}
               </TabsContent>
 
               <TabsContent value="comments" className="space-y-6 pb-4">
-                {contribution.comments.length > 0 && (
+                {contribution.comments.length > 0 ? (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Review Comments</h3>
                     <div className="space-y-3">
                       {contribution.comments.map((comment) => (
-                        <div key={comment.id} className="rounded-lg border p-4">
+                        <div
+                          key={comment.comment_id}
+                          className="rounded-lg border p-4"
+                        >
                           <div className="mb-2 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -235,10 +372,10 @@ const ContributionDetail = ({
                               </span>
                               <div>
                                 <p className="font-medium">
-                                  {comment.coordinator.name}
+                                  {comment.contributor.user_name}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  Coordinator
+                                  {comment.contributor.role?.role_name}
                                 </p>
                               </div>
                             </div>
@@ -247,12 +384,18 @@ const ContributionDetail = ({
                             </time>
                           </div>
                           <p className="mt-2 text-sm leading-relaxed">
-                            {comment.text}
+                            {comment.content}
                           </p>
                         </div>
                       ))}
                     </div>
                   </div>
+                ) : (
+                  <ErrorWidget
+                    type="no-data"
+                    title="No Comments"
+                    description="There are no comments for this contribution yet."
+                  />
                 )}
               </TabsContent>
             </ScrollArea>
