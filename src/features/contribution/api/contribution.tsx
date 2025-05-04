@@ -3,7 +3,11 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { AddContributionValues } from '../utils/validator'
 import axios from 'axios'
 import { apiClient } from '@/lib/api-client'
-import { CreatedContributionResponse, GetContributionsResponse } from '../types'
+import {
+  CreatedContributionResponse,
+  GetContributionResponse,
+  GetContributionsResponse,
+} from '../types'
 
 const createContribution = async ({
   token,
@@ -114,6 +118,43 @@ export const useGetContributions = (
   return useQuery({
     queryKey: ['contributions', role, user_id, faculty_id],
     queryFn: () => getContributions({ token, role, user_id, faculty_id }),
+    enabled,
+  })
+}
+
+const getContribution = async ({
+  token,
+  submission_id,
+}: {
+  token: string
+  submission_id: number
+}): Promise<GetContributionResponse> => {
+  try {
+    const response = await apiClient.get<GetContributionResponse>(
+      `/getStudentContribution?submission_id=${submission_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to fetch contribution.')
+  }
+}
+
+export const useGetContribution = (
+  token: string,
+  submission_id: number,
+  enabled: boolean = false
+) => {
+  return useQuery({
+    queryKey: ['contribution', submission_id],
+    queryFn: () => getContribution({ token, submission_id }),
     enabled,
   })
 }

@@ -60,10 +60,7 @@ const getMagazines = async (
 
     const magazines = response.data.result.filter((magazine) => {
       if (role === 'student') {
-        return (
-          magazine.status === 'OPEN' &&
-          new Date(magazine.closure.entry_closure) > new Date()
-        )
+        return magazine.status === 'OPEN'
       }
       return true
     })
