@@ -7,6 +7,7 @@ import {
   CreatedContributionResponse,
   GetContributionResponse,
   GetContributionsResponse,
+  UpdateSubmissionStatusResponse,
 } from '../types'
 
 const createContribution = async ({
@@ -197,6 +198,50 @@ export const useAddComment = (token: string) => {
     },
     onError: () => {
       toast('Unable to add your comment. Please try again.')
+    },
+  })
+}
+
+const updateSubmissionStatus = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: {
+    submission_id: number
+    status: 'ACCEPTED' | 'REJECTED' | 'PENDING'
+  }
+}): Promise<UpdateSubmissionStatusResponse> => {
+  try {
+    const response = await apiClient.put<UpdateSubmissionStatusResponse>(
+      '/updateSubmissionStatus',
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to update submission status.')
+  }
+}
+
+export const useUpdateSubmissionStatus = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: {
+      submission_id: number
+      status: 'ACCEPTED' | 'REJECTED' | 'PENDING'
+    }) => updateSubmissionStatus({ token, payload }),
+    onSuccess: () => {
+      toast('Submission status has been successfully updated.')
+    },
+    onError: () => {
+      toast('Unable to update submission status. Please try again.')
     },
   })
 }

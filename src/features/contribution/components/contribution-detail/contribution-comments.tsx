@@ -28,7 +28,7 @@ interface ContributionCommentsProps {
 }
 
 export function ContributionComments({
-  contribution: { comments, submission_id },
+  contribution: { comments, submission_id, submission_status },
 }: ContributionCommentsProps) {
   const [comment, setComment] = useState('')
   const session = useSession()
@@ -77,15 +77,12 @@ export function ContributionComments({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="divide-y p-0">
+      <CardContent className="divide-y p-0 pb-2">
         <ScrollArea>
           <div className="max-h-[300px]">
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <div
-                  key={comment.comment_id}
-                  className="bg-background p-6 transition-colors hover:bg-muted/50"
-                >
+                <div key={comment.comment_id} className="bg-background p-6">
                   <div className="mb-3 flex items-start gap-4">
                     <Avatar>
                       <AvatarImage
@@ -131,33 +128,35 @@ export function ContributionComments({
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="border-t p-6">
-        <div className="flex w-full gap-4">
-          <Avatar>
-            <AvatarImage src="/profile-placeholder.png" alt="Current User" />
-            <AvatarFallback>CU</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Add your comment..."
-              className="min-h-[100px] resize-none bg-background"
-            />
-            <div className="mt-3 flex justify-end">
-              <Button
-                disabled={!comment}
-                onClick={handleSubmitComment}
-                loading={addCommentMutatePending}
-                className="flex items-center gap-2"
-              >
-                <Send className="h-4 w-4" />
-                Send Comment
-              </Button>
+      {submission_status === 'PENDING' && (
+        <CardFooter className="border-t p-6">
+          <div className="flex w-full gap-4">
+            <Avatar>
+              <AvatarImage src="/profile-placeholder.png" alt="Current User" />
+              <AvatarFallback>CU</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Add your comment..."
+                className="min-h-[100px] resize-none bg-background"
+              />
+              <div className="mt-3 flex justify-end">
+                <Button
+                  disabled={!comment}
+                  onClick={handleSubmitComment}
+                  loading={addCommentMutatePending}
+                  className="flex items-center gap-2"
+                >
+                  <Send className="h-4 w-4" />
+                  Send Comment
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </CardFooter>
+        </CardFooter>
+      )}
     </Card>
   )
 }

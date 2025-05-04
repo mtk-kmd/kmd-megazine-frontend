@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { zipSync } from 'fflate'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 
 interface ContributionContentProps {
   contribution: Contribution
@@ -36,15 +37,14 @@ export function ContributionContent({
     return `${firstName[0]}${lastName[0]}`.toUpperCase()
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACCEPTED':
-        return 'bg-emerald-500'
-      case 'REJECTED':
-        return 'bg-rose-500'
-      default:
-        return 'bg-amber-500'
-    }
+  const getStatusVariant = () => {
+    return contribution.submission_status === 'PENDING'
+      ? 'warning'
+      : contribution.submission_status === 'ACCEPTED'
+        ? 'success'
+        : contribution.submission_status === 'REJECTED'
+          ? 'destructive'
+          : 'default'
   }
 
   const uploadUrls = contribution.uploadUrl || []
@@ -129,13 +129,12 @@ export function ContributionContent({
       <CardHeader className="space-y-4 border-b">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl">{contribution.title}</CardTitle>
-          <div
-            className={`rounded-full px-3 py-1 text-xs font-medium text-white ${getStatusColor(
-              contribution.submission_status
-            )}`}
+          <Badge
+            variant={getStatusVariant()}
+            className="px-3 py-1 text-xs font-medium"
           >
             {contribution.submission_status}
-          </div>
+          </Badge>
         </div>
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-3">

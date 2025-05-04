@@ -8,7 +8,9 @@ interface ContributionSidebarProps {
   contribution: Contribution
 }
 
-export function ContributionSidebar({ contribution }: ContributionSidebarProps) {
+export function ContributionSidebar({
+  contribution,
+}: ContributionSidebarProps) {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase()
   }
@@ -50,7 +52,8 @@ export function ContributionSidebar({ contribution }: ContributionSidebarProps) 
             </Avatar>
             <div>
               <p className="font-medium">
-                {contribution.student.first_name} {contribution.student.last_name}
+                {contribution.student.first_name}{' '}
+                {contribution.student.last_name}
               </p>
               {contribution.student.StudentFaculty?.faculty.name && (
                 <p className="text-sm text-muted-foreground">
@@ -68,10 +71,8 @@ export function ContributionSidebar({ contribution }: ContributionSidebarProps) 
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
               <div className="flex gap-3">
-                <div className="h-5 w-1.5 rounded-full bg-secondary-foreground"></div>
-                <span className="font-medium text-secondary-foreground">
-                  Submitted
-                </span>
+                <div className="h-5 w-1.5 rounded-full bg-green-500"></div>
+                <span className="font-medium text-green-500">Submitted At</span>
               </div>
               <span>
                 {format(
@@ -80,19 +81,23 @@ export function ContributionSidebar({ contribution }: ContributionSidebarProps) 
                 )}
               </span>
             </div>
+
             <div className="flex items-center justify-between">
               <div className="flex gap-3">
                 <div className="h-5 w-1.5 rounded-full bg-blue-500"></div>
-                <span className="font-medium text-blue-500">Last Updated</span>
+                <span className="font-medium text-blue-500">Entry Date</span>
               </div>
               <span>
-                {format(new Date(contribution.updatedAt), 'MMM d, yyyy h:mm a')}
+                {format(
+                  new Date(contribution.event.closure.entry_closure),
+                  'MMM d, yyyy h:mm a'
+                )}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex gap-3">
-                <div className="h-5 w-1.5 rounded-full bg-red-500"></div>
-                <span className="font-medium text-red-500">Closure Date</span>
+                <div className="h-5 w-1.5 rounded-full bg-amber-500"></div>
+                <span className="font-medium text-amber-500">Closure Date</span>
               </div>
               <span>
                 {format(

@@ -104,3 +104,8 @@ export type GetContributionResponse = {
     message: string;
     result: Contribution;
 }
+
+export type UpdateSubmissionStatusResponse = {
+    message: string;
+}
+    
