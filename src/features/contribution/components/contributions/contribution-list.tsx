@@ -16,7 +16,8 @@ export function ContributionList() {
 
   const faculty_id =
     (session?.data?.user.data?.StudentFaculty?.faculty_id as number) ||
-    (session?.data?.user.data?.Faculty?.faculty_id as number)
+    (session?.data?.user.data?.Faculty?.faculty_id as number) ||
+    (session?.data?.user.data?.GuestFaculty?.faculty_id as number)
 
   const role = ROLE_NAME[role_id]
 

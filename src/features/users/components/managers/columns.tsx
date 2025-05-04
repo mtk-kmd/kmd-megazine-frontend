@@ -12,7 +12,7 @@ export const columns: ColumnDef<User>[] = [
     header: ({ column }) => {
       return (
         <div
-          className="flex items-center gap-4 text-left"
+          className="flex items-center gap-4 whitespace-nowrap text-left"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
@@ -23,25 +23,33 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'user_name',
-    header: 'Name',
+    header: () => <div className="whitespace-nowrap">Name</div>,
     filterFn: 'includesString',
+    cell({ row }) {
+      const name = row.getValue<string>('user_name')
+      return <div className="whitespace-nowrap">{name}</div>
+    },
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    header: () => <div className="whitespace-nowrap">Email</div>,
     filterFn: 'includesString',
+    cell({ row }) {
+      const email = row.getValue<string>('email')
+      return <div className="whitespace-nowrap">{email}</div>
+    },
   },
   {
     accessorKey: 'phone',
-    header: 'Phone',
+    header: () => <div className="whitespace-nowrap">Phone</div>,
     cell({ row }) {
       const phone = row.getValue<string>('phone')
-      return <div>{phone ? phone : 'N/A'}</div>
+      return <div className="whitespace-nowrap">{phone ? phone : 'N/A'}</div>
     },
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: () => <div className="whitespace-nowrap">Status</div>,
     cell: ({ row }) => {
       const status =
         row.getValue<boolean>('status') === true ? 'Active' : 'Inactive'
@@ -54,11 +62,13 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: () => <div className="whitespace-nowrap">Created At</div>,
     cell: ({ row }) => {
       const createdAt = formatDate(row.getValue('createdAt'))
       return (
-        <div className="font-medium text-secondary-foreground">{createdAt}</div>
+        <div className="whitespace-nowrap font-medium text-secondary-foreground">
+          {createdAt}
+        </div>
       )
     },
   },

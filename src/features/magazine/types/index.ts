@@ -1,3 +1,4 @@
+import { Contribution } from "@/features/contribution/types";
 import { User } from "@/features/users/types";
 
 export interface Closure {
@@ -19,6 +20,7 @@ export interface Event {
   closure_id: number;
   User: User;
   closure: Closure;
+  StudentSubmission: Contribution[]
 }
 
 
@@ -39,35 +41,3 @@ export type SubmissionState =
   | 'selected'
   | 'rejected'
   
-export interface Contribution {
-  id: string
-  title: string
-  student: {
-    id: string
-    name: string
-    email: string
-  }
-  faculty: {
-    id: string
-    name: string
-  }
-  state: SubmissionState
-  submittedDate: string
-  documentUrl?: string
-  images?: string[]
-  createdAt: string
-  articleFile?: {
-    id: string
-    name: string
-    url: string
-  }
-  comments: {
-    id: string
-    text: string
-    coordinator: {
-      id: string
-      name: string
-    }
-    createdAt: string
-  }[]
-}

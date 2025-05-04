@@ -11,10 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Eye, Check, EyeClosed, ChevronDown } from 'lucide-react'
 
-import {
-  useCreateUser,
-  useAssignStudentToFaculty,
-} from '@/features/users/api/users'
+import { useCreateUser } from '@/features/users/api/users'
 import { cn } from '@/lib/utils'
 import {
   Command,
@@ -41,7 +38,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { useAssignGuestToFaculty } from '../../api/auth'
+import { useAssignGuestToFaculty } from '@/features/auth/api/auth'
 import { useRouter } from 'next/navigation'
 
 const Register = () => {
@@ -188,6 +185,7 @@ const Register = () => {
                       }
                       placeholder="Enter first name"
                       {...field}
+                      className="h-10"
                     />
                   </FormControl>
                   <FormMessage />
@@ -207,6 +205,7 @@ const Register = () => {
                       }
                       placeholder="Enter last name"
                       {...field}
+                      className="h-10"
                     />
                   </FormControl>
                   <FormMessage />
@@ -227,6 +226,7 @@ const Register = () => {
                     }
                     placeholder="Enter username"
                     {...field}
+                    className="h-10"
                   />
                 </FormControl>
                 <FormControl />
@@ -250,7 +250,7 @@ const Register = () => {
                         variant="outline"
                         role="combobox"
                         aria-expanded={isFacultySelectOpen}
-                        className="w-full justify-between pr-2"
+                        className="h-10 w-full justify-between pr-2"
                         disabled={
                           isCreateUserMutating || isAssignGuestToFacultyMutating
                         }
@@ -265,7 +265,7 @@ const Register = () => {
 
                           return faculty ? `${faculty.name}` : 'Select faculty'
                         })()}
-                        <ChevronDown className="opacity-50" />
+                        <ChevronDown strokeWidth={1.5} className="opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -285,7 +285,12 @@ const Register = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter email" type="email" {...field} />
+                  <Input
+                    placeholder="Enter email"
+                    type="email"
+                    {...field}
+                    className="h-10"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -302,7 +307,7 @@ const Register = () => {
                   <div className="relative">
                     <Input
                       placeholder="6+ characters"
-                      className="pr-6"
+                      className="h-10 pr-6"
                       {...field}
                       type={isPasswordVisible ? 'text' : 'password'}
                     />

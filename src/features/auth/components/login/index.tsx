@@ -115,6 +115,7 @@ const LoginForm = () => {
                     placeholder="example@gmail.com"
                     disabled={isSendingVerificationMail || isSubmitting}
                     {...field}
+                    className="h-10"
                   />
                 </FormControl>
                 <FormMessage />
@@ -132,7 +133,7 @@ const LoginForm = () => {
                   <div className="relative">
                     <Input
                       placeholder="6+ characters"
-                      className="pr-6"
+                      className="h-10 pr-6"
                       {...field}
                       disabled={isSendingVerificationMail || isSubmitting}
                       type={isPasswordVisible ? 'text' : 'password'}
