@@ -122,7 +122,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        className="resize-none"
+                        className="min-h-[100px] resize-none"
                         placeholder="Enter magazine description"
                         {...field}
                         disabled={isPending}
@@ -145,7 +145,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                           <Button
                             variant={'outline'}
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'h-10 w-full pl-3 pr-2.5 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                             disabled={isPending}
@@ -190,7 +190,7 @@ export function AddMagazine({ open, onOpenChange }: AddMagazineProps) {
                           <Button
                             variant={'outline'}
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'h-10 w-full pl-3 pr-2.5 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                             disabled={isPending}

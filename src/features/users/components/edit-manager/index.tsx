@@ -148,6 +148,7 @@ const EditManager = () => {
                           disabled={isUserEditMutating}
                           placeholder="Enter username"
                           {...field}
+                          className="h-10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -166,6 +167,7 @@ const EditManager = () => {
                           disabled={isUserEditMutating}
                           placeholder="Enter first name"
                           {...field}
+                          className="h-10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -183,6 +185,7 @@ const EditManager = () => {
                           disabled={isUserEditMutating}
                           placeholder="Enter last name"
                           {...field}
+                          className="h-10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -201,6 +204,7 @@ const EditManager = () => {
                           disabled={isUserEditMutating}
                           placeholder="Enter coordinator email"
                           {...field}
+                          className="h-10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -218,7 +222,7 @@ const EditManager = () => {
                           disabled={isUserEditMutating}
                           international
                           defaultCountry="MM"
-                          className="shadow-none"
+                          className="shadow-none [&>input]:h-10"
                           placeholder="Enter a phone number"
                           {...field}
                         />

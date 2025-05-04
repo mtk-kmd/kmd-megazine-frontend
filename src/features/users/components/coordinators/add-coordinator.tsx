@@ -251,6 +251,7 @@ const AddCoordinator: React.FC<{
                         }
                         placeholder="Enter username"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -271,6 +272,7 @@ const AddCoordinator: React.FC<{
                         }
                         placeholder="Enter first name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -290,6 +292,7 @@ const AddCoordinator: React.FC<{
                         }
                         placeholder="Enter last name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -313,7 +316,7 @@ const AddCoordinator: React.FC<{
                             variant="outline"
                             role="combobox"
                             aria-expanded={isFacultySelectOpen}
-                            className="w-full justify-between"
+                            className="h-10 w-full justify-between pr-1.5"
                             disabled={
                               isCreateUserMutating || isUpdateFacultyMutating
                             }
@@ -331,7 +334,10 @@ const AddCoordinator: React.FC<{
                                 ? `${faculty.name}`
                                 : 'Select faculty'
                             })()}
-                            <ChevronsUpDown className="opacity-50" />
+                            <ChevronsUpDown
+                              className="opacity-50"
+                              strokeWidth={1.5}
+                            />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -357,6 +363,7 @@ const AddCoordinator: React.FC<{
                         }
                         placeholder="Enter email"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -376,7 +383,7 @@ const AddCoordinator: React.FC<{
                         disabled={
                           isCreateUserMutating || isUpdateFacultyMutating
                         }
-                        className="shadow-none"
+                        className="shadow-none [&>input]:h-10"
                         placeholder="Enter a phone number"
                         {...field}
                       />
@@ -398,7 +405,7 @@ const AddCoordinator: React.FC<{
                             isCreateUserMutating || isUpdateFacultyMutating
                           }
                           placeholder="6+ characters"
-                          className="pr-6"
+                          className="h-10 pr-6"
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
                         />

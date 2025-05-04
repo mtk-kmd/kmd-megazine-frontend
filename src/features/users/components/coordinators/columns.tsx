@@ -12,7 +12,7 @@ export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
     header: ({ column }) => {
       return (
         <div
-          className="flex items-center gap-4 text-left"
+          className="flex items-center gap-4 whitespace-nowrap text-left"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           ID
@@ -23,22 +23,31 @@ export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   },
   {
     accessorKey: 'user_name',
-    header: 'Name',
+    header: () => <div className="whitespace-nowrap">Name</div>,
     filterFn: 'includesString',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('user_name')}</div>
+    ),
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    header: () => <div className="whitespace-nowrap">Email</div>,
     filterFn: 'includesString',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('email')}</div>
+    ),
   },
   {
     accessorFn: (row) => row.Faculty?.faculty_id,
-    header: 'Faculty',
+    header: () => <div className="whitespace-nowrap">Faculty</div>,
     id: 'faculty',
     accessorKey: 'faculty',
     cell: ({ row }) => {
       return (
-        <div key={row.original?.Faculty?.faculty_id}>
+        <div
+          key={row.original?.Faculty?.faculty_id}
+          className="whitespace-nowrap"
+        >
           {row.original?.Faculty ? row.original?.Faculty.name : 'N/A'}
         </div>
       )
@@ -50,20 +59,23 @@ export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   },
   {
     accessorKey: 'phone',
-    header: 'Phone',
+    header: () => <div className="whitespace-nowrap">Phone</div>,
     cell({ row }) {
       const phone = row.getValue<string>('phone')
-      return <div>{phone ? phone : 'N/A'}</div>
+      return <div className="whitespace-nowrap">{phone ? phone : 'N/A'}</div>
     },
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: () => <div className="whitespace-nowrap">Status</div>,
     cell: ({ row }) => {
       const status =
         row.getValue<boolean>('status') === true ? 'Active' : 'Inactive'
       return (
-        <Badge variant={status === 'Active' ? 'success' : 'destructive'}>
+        <Badge
+          variant={status === 'Active' ? 'success' : 'destructive'}
+          className="whitespace-nowrap"
+        >
           {status}
         </Badge>
       )
@@ -71,11 +83,13 @@ export const columns: ColumnDef<UserWithOptionalFaculty>[] = [
   },
   {
     accessorKey: 'createdAt',
-    header: 'Created At',
+    header: () => <div className="whitespace-nowrap">Created At</div>,
     cell: ({ row }) => {
       const createdAt = formatDate(row.getValue('createdAt'))
       return (
-        <div className="font-medium text-secondary-foreground">{createdAt}</div>
+        <div className="whitespace-nowrap font-medium text-secondary-foreground">
+          {createdAt}
+        </div>
       )
     },
   },

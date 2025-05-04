@@ -8,8 +8,12 @@ import ManagerDetail from './manager-detail'
 import Managers from './managers'
 import StudentDetail from './student-detail'
 import Students from './students'
+import Admins from './admins'
+import AdminDetail from './admin-detail'
 
 export {
+  Admins,
+  AdminDetail,
   Coordinators,
   CoordinatorDetail,
   EditCoordinator,

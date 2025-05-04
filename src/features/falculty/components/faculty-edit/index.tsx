@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import React, { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useUpdateFaculty } from '@/features/users/api/users'
 import {
   Form,
@@ -27,12 +27,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { ChevronLeft } from 'lucide-react'
 
 const EditFaculty = () => {
   const session = useSession()
   const queryClient = useQueryClient()
   const accessToken = session.data?.user.token as string
   const params = useParams<{ facultyId: string }>()
+  const router = useRouter()
 
   const { mutate: updateFacultyMutate, isPending: isUpdateFacultyMutating } =
     useUpdateFaculty(accessToken)
@@ -110,7 +112,15 @@ const EditFaculty = () => {
 
   if (isSuccess) {
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10 pt-5">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/faculties')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <div className="mx-auto flex w-full max-w-md flex-col gap-5">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
@@ -137,6 +147,7 @@ const EditFaculty = () => {
                           disabled={isUpdateFacultyMutating}
                           placeholder="Enter name"
                           {...field}
+                          className="h-10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -152,7 +163,7 @@ const EditFaculty = () => {
                         <div className="flex min-w-0 gap-x-4">
                           <Avatar>
                             <AvatarImage
-                              src="https://github.com/shadcn.png"
+                              src="/profile-placeholder.png"
                               alt="@shadcn"
                             />
                             <AvatarFallback>CN</AvatarFallback>

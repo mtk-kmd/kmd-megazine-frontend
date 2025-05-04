@@ -217,6 +217,7 @@ const AddFaculty: React.FC<{
                         placeholder="Enter username"
                         disabled={isCreateFacultyMutating}
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -239,7 +240,7 @@ const AddFaculty: React.FC<{
                           <Button
                             variant="outline"
                             role="combobox"
-                            className="w-full justify-between"
+                            className="h-10 w-full justify-between pr-1.5"
                             disabled={isCreateFacultyMutating}
                           >
                             {(() => {
@@ -255,7 +256,10 @@ const AddFaculty: React.FC<{
                                 ? `${coordinator.user_name}`
                                 : 'Select Coordinator'
                             })()}
-                            <ChevronsUpDown className="opacity-50" />
+                            <ChevronsUpDown
+                              className="opacity-50"
+                              strokeWidth={1.5}
+                            />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">

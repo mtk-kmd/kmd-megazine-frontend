@@ -217,6 +217,7 @@ const AddStudent: React.FC<{
                           isAssignStudentToFacultyMutating
                         }
                         placeholder="Enter username"
+                        className="h-10"
                         {...field}
                       />
                     </FormControl>
@@ -239,6 +240,7 @@ const AddStudent: React.FC<{
                         }
                         placeholder="Enter first name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -259,6 +261,7 @@ const AddStudent: React.FC<{
                         }
                         placeholder="Enter last name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -282,7 +285,7 @@ const AddStudent: React.FC<{
                             variant="outline"
                             role="combobox"
                             aria-expanded={isFacultySelectOpen}
-                            className="w-full justify-between"
+                            className="w-full justify-between pr-1.5"
                             disabled={
                               isCreateUserMutating ||
                               isAssignStudentToFacultyMutating
@@ -301,7 +304,10 @@ const AddStudent: React.FC<{
                                 ? `${faculty.name}`
                                 : 'Select faculty'
                             })()}
-                            <ChevronsUpDown className="opacity-50" />
+                            <ChevronsUpDown
+                              strokeWidth={1.5}
+                              className="opacity-50"
+                            />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -328,6 +334,7 @@ const AddStudent: React.FC<{
                         }
                         placeholder="Enter student email"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -348,7 +355,7 @@ const AddStudent: React.FC<{
                           isCreateUserMutating ||
                           isAssignStudentToFacultyMutating
                         }
-                        className="shadow-none"
+                        className="shadow-none [&>input]:h-10"
                         placeholder="Enter a phone number"
                         {...field}
                       />
@@ -371,7 +378,7 @@ const AddStudent: React.FC<{
                             isAssignStudentToFacultyMutating
                           }
                           placeholder="6+ characters"
-                          className="pr-6"
+                          className="h-10 pr-6"
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
                         />

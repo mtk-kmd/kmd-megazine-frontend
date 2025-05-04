@@ -287,7 +287,7 @@ const EditCoordinator = () => {
                               role="combobox"
                               disabled={true}
                               aria-expanded={isFacultySelectOpen}
-                              className="h-10 w-full justify-between"
+                              className="h-10 w-full justify-between pr-1.5"
                             >
                               {(() => {
                                 const faculty = field.value
@@ -302,7 +302,10 @@ const EditCoordinator = () => {
                                   ? `${faculty.name}`
                                   : 'Select faculty'
                               })()}
-                              <ChevronDown className="opacity-50" />
+                              <ChevronDown
+                                className="opacity-50"
+                                strokeWidth={1.5}
+                              />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-[--radix-popover-trigger-width] p-0">

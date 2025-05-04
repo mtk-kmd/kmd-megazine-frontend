@@ -1,14 +1,22 @@
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
+'use client'
+
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+} from '@/components/ui/drawer'
+
+import { z } from 'zod'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { addManagerSchema } from '@/features/users/utils/validator'
+
 import {
   Form,
   FormControl,
@@ -18,54 +26,42 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
-import { toast } from 'sonner'
-import { ROLE } from '@/utils/constants'
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useSession } from 'next-auth/react'
 import { Eye, EyeClosed } from 'lucide-react'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useSession } from 'next-auth/react'
+import { ROLE } from '@/utils/constants'
 import { useQueryClient } from '@tanstack/react-query'
-
 import { PhoneInput } from '@/components/ui/phone-input'
 import { useCreateUser } from '@/features/users/api/users'
-import { addCoordinatorSchema } from '@/features/users/utils/validator'
 
-const initialCoordinatorFormValues = {
+const initialFormValues = {
   username: '',
   first_name: '',
   last_name: '',
   phone: '',
   email: '',
   password: '',
-  role: ROLE['marketing_coordinator'],
+  role: ROLE['admin'],
 }
 
-const AddCoordinator: React.FC<{
+const AddAdmin: React.FC<{
   open: boolean
   onOpenChange: (open: boolean) => void
 }> = ({ open, onOpenChange }) => {
   const session = useSession()
   const queryClient = useQueryClient()
   const accessToken = session?.data?.user?.token as string
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const { mutate: createUserMutate, isPending: isCreateUserMutating } =
     useCreateUser(accessToken)
 
-  const form = useForm<z.infer<typeof addCoordinatorSchema>>({
-    resolver: zodResolver(addCoordinatorSchema),
-    defaultValues: { ...initialCoordinatorFormValues },
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+
+  const form = useForm<z.infer<typeof addManagerSchema>>({
+    resolver: zodResolver(addManagerSchema),
+    defaultValues: { ...initialFormValues },
   })
 
-  const onDismiss = (open: boolean) => {
-    if (!isCreateUserMutating) {
-      onOpenChange(open)
-    }
-  }
-
-  const onSubmit = async (values: z.infer<typeof addCoordinatorSchema>) => {
+  const onSubmit = async (values: z.infer<typeof addManagerSchema>) => {
     createUserMutate(
       {
         username: values.username,
@@ -79,35 +75,42 @@ const AddCoordinator: React.FC<{
       {
         async onSuccess() {
           await queryClient.invalidateQueries({
-            queryKey: ['users', 'role', 'marketing coordinator'],
+            queryKey: ['users', 'role', 'admin'],
           })
-        },
-        onError(error) {
-          toast.error(error.message)
-        },
-        onSettled() {
-          onDismiss(false)
+          handleOnDismiss(false)
         },
       }
     )
   }
 
+  const togglePasswordVisible = (open: boolean) => {
+    setIsPasswordVisible(open)
+  }
+
+  const handleOnDismiss = (open: boolean) => {
+    if (!isCreateUserMutating) {
+      form.reset({ ...initialFormValues })
+      onOpenChange(open)
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onDismiss}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>Add New Coordinator</DialogTitle>
-          <DialogDescription>
-            Fill in the coordinator details below
-          </DialogDescription>
-        </DialogHeader>
+    <Drawer open={open} onOpenChange={handleOnDismiss}>
+      <DrawerContent className="flex h-full max-h-[calc(100dvh-0.75rem)] flex-col">
+        <DrawerHeader className="mx-auto w-full max-w-md">
+          <DrawerTitle>Add New Admin</DrawerTitle>
+          <DrawerDescription>
+            Fill in the details below to add a new admin to the system.
+          </DrawerDescription>
+        </DrawerHeader>
+
         <Form {...form}>
           <form
-            id="add-coordinator-form"
-            className="flex-1 overflow-y-auto"
+            id="add-manager-form"
             onSubmit={form.handleSubmit(onSubmit)}
+            className="flex-1 overflow-y-auto"
           >
-            <div className="grid w-full grid-cols-1 gap-3 p-0.5 md:grid-cols-2">
+            <div className="mx-auto grid w-full max-w-md grid-cols-1 gap-5 p-4 pt-0 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="username"
@@ -192,8 +195,8 @@ const AddCoordinator: React.FC<{
                       <PhoneInput
                         international
                         defaultCountry="MM"
-                        className="shadow-none [&>input]:h-10"
                         disabled={isCreateUserMutating}
+                        className="shadow-none [&>input]:h-10"
                         placeholder="Enter a phone number"
                         {...field}
                       />
@@ -224,7 +227,7 @@ const AddCoordinator: React.FC<{
                             type="button"
                             className="size-7"
                             onClick={() =>
-                              setIsPasswordVisible(!isPasswordVisible)
+                              togglePasswordVisible(!isPasswordVisible)
                             }
                           >
                             {isPasswordVisible ? (
@@ -243,29 +246,28 @@ const AddCoordinator: React.FC<{
             </div>
           </form>
         </Form>
-        <DialogFooter className="p-1">
-          <DialogClose asChild>
+        <DrawerFooter className="mx-auto flex w-full max-w-md flex-col gap-3 lg:flex-row">
+          <DrawerClose asChild>
             <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
               disabled={isCreateUserMutating}
+              className="lg:flex-1"
+              variant="outline"
             >
               Cancel
             </Button>
-          </DialogClose>
+          </DrawerClose>
           <Button
             type="submit"
-            className="flex-1"
-            form="add-coordinator-form"
+            className="lg:flex-1"
+            form="add-manager-form"
             loading={isCreateUserMutating}
           >
-            Create
+            Submit
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   )
 }
 
-export default AddCoordinator
+export default AddAdmin

@@ -122,6 +122,7 @@ const AddManager: React.FC<{
                         disabled={isCreateUserMutating}
                         placeholder="Enter username"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -140,6 +141,7 @@ const AddManager: React.FC<{
                         disabled={isCreateUserMutating}
                         placeholder="Enter first name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -157,6 +159,7 @@ const AddManager: React.FC<{
                         disabled={isCreateUserMutating}
                         placeholder="Enter last name"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -175,6 +178,7 @@ const AddManager: React.FC<{
                         disabled={isCreateUserMutating}
                         placeholder="Enter email"
                         {...field}
+                        className="h-10"
                       />
                     </FormControl>
                     <FormMessage />
@@ -192,7 +196,7 @@ const AddManager: React.FC<{
                         international
                         defaultCountry="MM"
                         disabled={isCreateUserMutating}
-                        className="shadow-none"
+                        className="shadow-none [&>input]:h-10"
                         placeholder="Enter a phone number"
                         {...field}
                       />
@@ -212,7 +216,7 @@ const AddManager: React.FC<{
                         <Input
                           disabled={isCreateUserMutating}
                           placeholder="6+ characters"
-                          className="pr-6"
+                          className="h-10 pr-6"
                           {...field}
                           type={isPasswordVisible ? 'text' : 'password'}
                         />

@@ -111,73 +111,92 @@ const RowActions = ({ row }: RowActionsProps) => {
     }
   }
 
-  return (
-    <div className="flex items-center gap-2">
-      <>
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreVertical className="h-4 w-4" />
+  if (role === 'manager') {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link href={`/magazines/${row.event_id}`}>
+            <Button variant="ghost" size="icon">
+              <View strokeWidth={1.2} className="font size-5 text-green-600" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="rounded-xl" align="end">
-            <Link
-              href={`/magazines/${row.event_id}`}
-              onClick={() => setIsDropdownOpen(false)}
-            >
-              <DropdownMenuItem className="rounded-lg px-4 py-2.5 text-sm font-semibold [&>svg]:size-5">
-                <View strokeWidth={1.2} className="mr-2 size-5" />
-                <span>View</span>
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent className="rounded-lg px-4 py-2.5 text-sm font-semibold">
+          View
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
 
-            <Link
-              href={`/magazines/${row.event_id}/edit`}
-              onClick={() => setIsDropdownOpen(false)}
-            >
-              <DropdownMenuItem className="rounded-lg px-4 py-2.5 text-sm font-semibold [&>svg]:size-5">
-                <PencilLine strokeWidth={1.2} className="mr-2 size-5" />
-                <span>Edit</span>
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="rounded-lg px-4 py-2.5 text-sm font-semibold text-destructive focus:text-destructive [&>svg]:size-5"
-            >
-              <Trash2 strokeWidth={1.2} className="mr-2 size-5" />
-              <span>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <AlertDialog open={isDeleteOpen} onOpenChange={handleDeleteOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the
-                magazine.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleteMagazineLoading}>
-                Cancel
-              </AlertDialogCancel>
-              <Button
-                variant="destructive"
-                onClick={confirmDelete}
-                loading={isDeleteMagazineLoading}
-              >
-                Delete
+  if (role === 'admin') {
+    return (
+      <div className="flex items-center gap-2">
+        <>
+          <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </>
-    </div>
-  )
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="rounded-xl" align="end">
+              <Link
+                href={`/magazines/${row.event_id}`}
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                <DropdownMenuItem className="rounded-lg px-4 py-2.5 text-sm font-semibold [&>svg]:size-5">
+                  <View strokeWidth={1.2} className="mr-2 size-5" />
+                  <span>View</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+
+              <Link
+                href={`/magazines/${row.event_id}/edit`}
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                <DropdownMenuItem className="rounded-lg px-4 py-2.5 text-sm font-semibold [&>svg]:size-5">
+                  <PencilLine strokeWidth={1.2} className="mr-2 size-5" />
+                  <span>Edit</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                className="rounded-lg px-4 py-2.5 text-sm font-semibold text-destructive focus:text-destructive [&>svg]:size-5"
+              >
+                <Trash2 strokeWidth={1.2} className="mr-2 size-5" />
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <AlertDialog open={isDeleteOpen} onOpenChange={handleDeleteOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  magazine.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleteMagazineLoading}>
+                  Cancel
+                </AlertDialogCancel>
+                <Button
+                  variant="destructive"
+                  onClick={confirmDelete}
+                  loading={isDeleteMagazineLoading}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      </div>
+    )
+  }
 }
 
 export default RowActions

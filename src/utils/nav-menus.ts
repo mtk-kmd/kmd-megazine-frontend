@@ -18,6 +18,7 @@ const adminNavItems = [
       { title: 'Coordinators', url: '/coordinators' },
       { title: 'Managers', url: '/managers' },
       { title: 'Guests', url: '/guests' },
+      { title: 'Admins', url: '/admins' },
     ],
   },
   {
@@ -48,14 +49,10 @@ const managerNavItems = [
     items: [],
   },
   {
-    title: 'User Management',
-    url: '#',
-    icon: Users,
-    isActive: true,
-    items: [
-      { title: 'Students', url: '/students' },
-      { title: 'Coordinators', url: '/coordinators' },
-    ],
+    title: 'Contributions',
+    url: '/contributions',
+    icon: GalleryVerticalEnd,
+    items: [],
   },
   {
     title: 'Manage Magazines',
