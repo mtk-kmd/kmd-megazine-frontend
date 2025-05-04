@@ -164,7 +164,7 @@ export function ContributionContent({
           <Separator orientation="vertical" className="h-8" />
           <div className="flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
-            <span>{dayjs(contribution.submittedAt).format('MMM d, yyyy')}</span>
+            <span>{dayjs(contribution.submittedAt).format('MMM D, YYYY')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <MessageSquare className="h-4 w-4" />
@@ -174,8 +174,8 @@ export function ContributionContent({
       </CardHeader>
 
       <CardContent className="p-0">
-        <ScrollArea className="h-[300px]">
-          <div className="p-6">
+        <ScrollArea>
+          <div className="max-h-[300px] p-6">
             <p className="whitespace-pre-wrap leading-relaxed text-foreground">
               {contribution.content}
             </p>

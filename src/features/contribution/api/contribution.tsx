@@ -158,3 +158,45 @@ export const useGetContribution = (
     enabled,
   })
 }
+
+const addComment = async ({
+  token,
+  payload,
+}: {
+  token: string
+  payload: { submission_id: number; comment: string; user_id: number }
+}): Promise<Comment> => {
+  try {
+    const response = await apiClient.post<Comment>(
+      '/addCommentToContribution',
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.message)
+    }
+    throw new Error('Failed to add comment.')
+  }
+}
+
+export const useAddComment = (token: string) => {
+  return useMutation({
+    mutationFn: (payload: {
+      submission_id: number
+      comment: string
+      user_id: number
+    }) => addComment({ token, payload }),
+    onSuccess: () => {
+      toast('Your comment has been successfully added.')
+    },
+    onError: () => {
+      toast('Unable to add your comment. Please try again.')
+    },
+  })
+}
