@@ -340,7 +340,10 @@ const EditStudent = () => {
                                   ? `${faculty.name}`
                                   : 'Select faculty'
                               })()}
-                              <ChevronDown className="opacity-50" />
+                              <ChevronDown
+                                strokeWidth={1.5}
+                                className="opacity-50"
+                              />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-[--radix-popover-trigger-width] p-0">

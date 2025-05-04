@@ -3,11 +3,14 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
 import { useGetFaculty } from '@/features/falculty/api/falculty'
-import { GraduationCap, IdCard, User, Users } from 'lucide-react'
+import { ChevronLeft, GraduationCap, IdCard, User, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 const FacultyDetail = () => {
   const session = useSession()
 
+  const router = useRouter()
   const accessToken = session.data?.user.token as string
   const params = useParams<{ facultyId: string }>()
 
@@ -29,7 +32,15 @@ const FacultyDetail = () => {
     const faculty = data.result
 
     return (
-      <div className="container mx-auto flex flex-col gap-y-5 pb-10">
+      <div className="container mx-auto flex flex-col gap-y-5 px-4 py-6 pt-5 sm:px-6 lg:px-8">
+        <Button
+          variant="secondary"
+          className="w-fit"
+          onClick={() => router.push('/faculties')}
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
         <div className="border-input/75 sm:flex sm:items-center sm:justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-2xl font-semibold text-secondary-foreground sm:text-xl">
